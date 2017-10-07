@@ -1,5 +1,5 @@
-CC=gcc
-CFLAGS=-Ofast -pg -std=c99 -fopenmp
+CC=g++
+CFLAGS=-std=c++14 -Ofast -pg -fopenmp -Wall -Wshadow -pedantic -Werror -Wsign-compare -Wtype-limits -Wignored-qualifiers -Wempty-body -Wclobbered -Wuninitialized
 
 .c.o:
 	$(CC) -c $(CFLAGS) $<

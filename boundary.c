@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "datadef.h"
-
+/*
+ * SSH: akomporday@haswell
+ */
 /* Modified slightly by D. Orchard (2010) from the classic code from: 
 
     Michael Griebel, Thomas Dornseifer, Tilman Neunhoeffer,
@@ -16,24 +18,26 @@
  * the u and v velocities. Also enforce the boundary conditions at the
  * edges of the matrix.
  */
-void apply_boundary_conditions(int jmax, double (*u)[jmax+2], double (*v)[jmax+2], char (*flag)[jmax+2],
-    int imax, double ui, double vi)
+void apply_boundary_conditions(
+                               DoubleMatrix& u,
+                               DoubleMatrix& v,
+                               CharMatrix&   flag)
 {
-    for (int j=0; j<=jmax+1; j++) {
+    for (int j=0; j<=jMAX+1; j++) {
         /* Fluid freely flows in from the west */
         u[0][j] = u[1][j];
         v[0][j] = v[1][j];
 
         /* Fluid freely flows out to the east */
-        u[imax][j] = u[imax-1][j];
-        v[imax+1][j] = v[imax][j];
+        u[iMAX][j]   = u[iMAX-1][j];
+        v[iMAX+1][j] = v[iMAX][j];
     }
 
-    for (int i=0; i<=imax+1; i++) {
+    for (int i=0; i<=iMAX+1; i++) {
         /* The vertical velocity approaches 0 at the north and south
          * boundaries, but fluid flows freely in the horizontal direction */
-        v[i][jmax] = 0.0;
-        u[i][jmax+1] = u[i][jmax];
+        v[i][jMAX]   = 0.0;
+        u[i][jMAX+1] = u[i][jMAX];
 
         v[i][0] = 0.0;
         u[i][0] = u[i][1];
@@ -44,58 +48,58 @@ void apply_boundary_conditions(int jmax, double (*u)[jmax+2], double (*v)[jmax+2
      * tend towards zero in these cells.
      */
 
-   for (int i=1; i<=imax; i++) {
-        for (int j=1; j<=jmax; j++) {
-            if (flag[i][j] & B_NSEW) {
+   for (int i = 1; i <= iMAX; i++) {
+        for (int j = 1; j <= jMAX; j++) {
+            if (flag[i][j] & Cell::B_NSEW) {
                 switch (flag[i][j]) {
-                    case B_N: 
+                    case Cell::B_N: 
                         u[i][j]   = -u[i][j+1];
                         break;
-                    case B_E: 
+                    case Cell::B_E: 
                         u[i][j]   = 0.0;
                         break;
-                    case B_NE:
+                    case Cell::B_NE:
                         u[i][j]   = 0.0;
                         break;
-                    case B_SE:
+                    case Cell::B_SE:
                         u[i][j]   = 0.0;                      
                         break;
-                    case B_NW:
+                    case Cell::B_NW:
                         u[i][j]   = -u[i][j+1];
                         break;
-                    case B_S:
+                    case Cell::B_S:
                         u[i][j]   = -u[i][j-1];
                         break;
-                    case B_SW:
+                    case Cell::B_SW:
                         u[i][j]   = -u[i][j-1];
                         break;
                 }
             }
 	}
     } 
-    for (int i=0; i<=(imax-1); i++) {
-        for (int j=1; j<=jmax; j++) {
-            if (flag[i+1][j] & B_NSEW) {
+    for (int i=0; i<=(iMAX-1); i++) {
+        for (int j=1; j<=jMAX; j++) {
+            if (flag[i+1][j] & Cell::B_NSEW) {
                 switch (flag[i+1][j]) {
-                    case B_N: 
+                    case Cell::B_N: 
                         u[i][j] = -u[i][j+1];
                         break;
-                    case B_W: 
+                    case Cell::B_W: 
                         u[i][j] = 0.0;
                         break;
-                    case B_NE:
+                    case Cell::B_NE:
                         u[i][j] = -u[i][j+1];
                         break;
-                    case B_SW:
+                    case Cell::B_SW:
                         u[i][j] = 0.0;
                         break;
-                    case B_NW:
+                    case Cell::B_NW:
                         u[i][j] = 0.0;
                         break;
-                  case B_S:
+                    case Cell::B_S:
                         u[i][j] = -u[i][j-1];
                         break;
-                    case B_SE:
+                    case Cell::B_SE:
                         u[i][j] = -u[i][j-1];
                         break;
                 }
@@ -104,29 +108,29 @@ void apply_boundary_conditions(int jmax, double (*u)[jmax+2], double (*v)[jmax+2
     } 
 
 
-    for (int i=1; i<=imax; i++) {
-        for (int j=1; j<=jmax; j++) {
-            if (flag[i][j] & B_NSEW) {
+    for (int i=1; i<=iMAX; i++) {
+        for (int j=1; j<=jMAX; j++) {
+            if (flag[i][j] & Cell::B_NSEW) {
                 switch (flag[i][j]) {
-                    case B_N: 
+                    case Cell::B_N: 
                         v[i][j]   = 0.0;
                         break;
-                    case B_E: 
+                    case Cell::B_E: 
                         v[i][j]   = -v[i+1][j];
                         break;
-                    case B_NE:
+                    case Cell::B_NE:
                         v[i][j]   = 0.0;
                         break;
-                    case B_SE:
+                    case Cell::B_SE:
                         v[i][j]   = -v[i+1][j];
                         break;
-                    case B_NW:
+                    case Cell::B_NW:
                         v[i][j]   = 0.0;
                         break;
-                    case B_W: 
+                    case Cell::B_W: 
                         v[i][j]   = -v[i-1][j];
                         break;
-                    case B_SW:
+                    case Cell::B_SW:
                         v[i][j]   = -v[i-1][j];
                         break;
                 }
@@ -134,29 +138,29 @@ void apply_boundary_conditions(int jmax, double (*u)[jmax+2], double (*v)[jmax+2
 	 }
       } 
 
-    for (int i=1; i<=imax; i++) {
-      for (int j=0; j<=(jmax-1); j++) {
-            if (flag[i][j+1] & B_NSEW) {
+    for (int i=1; i<=iMAX; i++) {
+      for (int j=0; j<=(jMAX-1); j++) {
+            if (flag[i][j+1] & Cell::B_NSEW) {
                 switch (flag[i][j+1]) {
-                    case B_E: 
+                    case Cell::B_E: 
                         v[i][j] = -v[i+1][j];
                         break;
-                    case B_S:
+                    case Cell::B_S:
                         v[i][j] = 0.0;
                         break;
-                    case B_NE:
+                    case Cell::B_NE:
                         v[i][j] = -v[i+1][j];
                         break;
-                    case B_SE:
+                    case Cell::B_SE:
                         v[i][j] = 0.0;
                         break;
-                    case B_SW:
+                    case Cell::B_SW:
                         v[i][j] = 0.0;
 			break;
-                    case B_W: 
+                    case Cell::B_W: 
                         v[i][j] = -v[i-1][j];
                         break;
-                    case B_NW:
+                    case Cell::B_NW:
                         v[i][j] = -v[i-1][j];
                         break;
                 }
@@ -168,7 +172,7 @@ void apply_boundary_conditions(int jmax, double (*u)[jmax+2], double (*v)[jmax+2
      * a continual flow of fluid into the simulation.
      */
     v[0][0] = 2*vi-v[1][0];
-    for (int j=1;j<=jmax;j++) {
+    for (int j=1;j<=jMAX;j++) {
         u[0][j] = ui;
         v[0][j] = 2*vi-v[1][j];
     }

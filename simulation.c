@@ -18,15 +18,25 @@
 */
 
 /* Computation of tentative velocity field (f, g) */
-void compute_tentative_velocity(int jmax, double (*u)[jmax+2], double (*v)[jmax+2], double (*f)[jmax+2], double (*g)[jmax+2],
-    char (*flag)[jmax+2], int imax,  double del_t, double delx, double dely,
-    double gamma, double Re)
+void compute_tentative_velocity(
+    int jMAX, 
+    DoubleMatrix& u, 
+    DoubleMatrix& v, 
+    DoubleMatrix& f, 
+    DoubleMatrix& g,
+    CharMatrix&   flag, 
+    int      iMAX,  
+    double   del_t, 
+    double   delx, 
+    double   dely,
+    double   gamma, 
+    double   Re)
 {
     //f array written with [i][j] pattern
     //u array read with [i][j] [i+1][j] [i-1][j] pattern
     //v array read with [i][j] [i+1][j] [i+1][j-1] pattern
-    for (int i=1; i<=imax-1; i++) {
-        for (int j=1; j<=jmax; j++) {
+    for (int i=1; i<=iMAX-1; i++) {
+        for (int j=1; j<=jMAX; j++) {
             double du2dx, duvdy, laplu;
             /* only if both adjacent cells are fluid cells */
             if ((flag[i][j] & C_F) && (flag[i+1][j] & C_F)) {
@@ -50,8 +60,8 @@ void compute_tentative_velocity(int jmax, double (*u)[jmax+2], double (*v)[jmax+
         }
     }
 
-    for (int i=1; i<=imax; i++) {
-        for (int j=1; j<=jmax-1; j++) {
+    for (int i=1; i<=iMAX; i++) {
+        for (int j=1; j<=jMAX-1; j++) {
             /* only if both adjacent cells are fluid cells */
             if ((flag[i][j] & C_F) && (flag[i][j+1] & C_F)) {
                 double duvdx, dv2dy, laplv;
@@ -77,23 +87,31 @@ void compute_tentative_velocity(int jmax, double (*u)[jmax+2], double (*v)[jmax+
     }
 
     /* f & g at external boundaries */
-    for (int j=1; j<=jmax; j++) {
+    for (int j=1; j<=jMAX; j++) {
         f[0][j]    = u[0][j];
-        f[imax][j] = u[imax][j];
+        f[iMAX][j] = u[iMAX][j];
     }
-    for (int i=1; i<=imax; i++) {
+    for (int i=1; i<=iMAX; i++) {
         g[i][0]    = v[i][0];
-        g[i][jmax] = v[i][jmax];
+        g[i][jMAX] = v[i][jMAX];
     }
 }
 
 
 /* Calculate the right hand side of the pressure equation */
-void compute_rhs(int jmax, double (*f)[jmax+2], double (*g)[jmax+2], double (*rhs)[jmax+2], char (*flag)[jmax+2], int imax,
-   double del_t, double delx, double dely)
+void compute_rhs(
+    int jMAX, 
+    DoubleMatrix& f, 
+    DoubleMatrix& g, 
+    DoubleMatrix& rhs, 
+    CharMatrix&   flag, 
+    int      iMAX,
+    double   del_t, 
+    double   delx, 
+    double   dely)
 {
-    for (int i=1;i<=imax;i++) {
-        for (int j=1;j<=jmax;j++) {
+    for (int i=1;i<=iMAX;i++) {
+        for (int j=1;j<=jMAX;j++) {
             if (flag[i][j] & C_F) {
                 /* only for fluid and non-surface cells */
                 rhs[i][j] = (
@@ -106,9 +124,13 @@ void compute_rhs(int jmax, double (*f)[jmax+2], double (*g)[jmax+2], double (*rh
 
 
 /* Red/Black SOR to solve the poisson equation */
-int poisson(int jmax, double (*p)[jmax+2], double (*rhs)[jmax+2], char (*flag)[jmax+2], int imax, 
-    double delx, double dely, double eps, int itermax, double omega,
-    double *res, int ifull)
+int poisson(
+    int jMAX, 
+    DoubleMatrix& p, 
+    DoubleMatrix& rhs, 
+    CharMatrix&   flag, 
+    double&  res, 
+    int      ifull)
 {
     int iter;
     double beta_2;
@@ -119,8 +141,8 @@ int poisson(int jmax, double (*p)[jmax+2], double (*rhs)[jmax+2], char (*flag)[j
     beta_2 = -omega/(2.0*(rdx2+rdy2));
 
     /* Calculate sum of squares */
-    for (int i = 1; i <= imax; i++) {
-        for (int j=1; j<=jmax; j++) {
+    for (int i = 1; i <= iMAX; i++) {
+        for (int j=1; j<=jMAX; j++) {
             if (flag[i][j] & C_F) { p0 += p[i][j]*p[i][j]; }
         }
     }
@@ -132,8 +154,8 @@ int poisson(int jmax, double (*p)[jmax+2], double (*rhs)[jmax+2], char (*flag)[j
     /* Red/Black SOR-iteration */
     for (iter = 0; iter < itermax; iter++) {
         for (int rb = 0; rb <= 1; rb++) {
-            for (int i = 1; i <= imax; i++) {
-                for (int j = 1; j <= jmax; j++) {
+            for (int i = 1; i <= iMAX; i++) {
+                for (int j = 1; j <= jMAX; j++) {
                     /* This is tricky, try and think about what happens here */
                     if ((i+j) % 2 != rb) { continue; }
                     if (flag[i][j] == (C_F | B_NSEW)) {
@@ -158,8 +180,8 @@ int poisson(int jmax, double (*p)[jmax+2], double (*rhs)[jmax+2], char (*flag)[j
 
         /* Partial computation of residual */
         double resl = 0.0;
-        for (int i = 1; i <= imax; i++) {
-            for (int j = 1; j <= jmax; j++) {
+        for (int i = 1; i <= iMAX; i++) {
+            for (int j = 1; j <= jMAX; j++) {
                 if (flag[i][j] & C_F) {
         /* only fluid cells */
                     double add = (eps_E*(p[i+1][j]-p[i][j]) - 
@@ -171,9 +193,9 @@ int poisson(int jmax, double (*p)[jmax+2], double (*rhs)[jmax+2], char (*flag)[j
             }
         }
         resl = sqrt((resl)/ifull)/p0;
-        *res = resl;
+        res = resl;
         /* convergence? */
-        if (*res<eps) break;
+        if (res<eps) break;
     } /* end of iter */
 
     return iter;
@@ -183,12 +205,18 @@ int poisson(int jmax, double (*p)[jmax+2], double (*rhs)[jmax+2], char (*flag)[j
 /* Update the velocity values based on the tentative
  * velocity values and the new pressure matrix
  */
-void update_velocity(int jmax, double (*u)[jmax+2], double (*v)[jmax+2], double (*f)[jmax+2], double (*g)[jmax+2], double (*p)[jmax+2],
-    char (*flag)[jmax+2], int imax,  double del_t, double delx, double dely)
+void update_velocity(int jMAX, 
+                     DoubleMatrix& u; 
+                     DoubleMatrix& v;
+                     DoubleMatrix& f 
+                     DoubleMatrix& g, 
+                     DoubleMatrix& p,
+                     CharMatrix&   flag 
+)
 {
 
-    for (int i=1; i<=imax-1; i++) {
-        for (int j=1; j<=jmax; j++) {
+    for (int i=1; i<=iMAX-1; i++) {
+        for (int j=1; j<=jMAX; j++) {
             /* only if both adjacent cells are fluid cells */
             if ((flag[i][j] & C_F) && (flag[i+1][j] & C_F)) {
                 u[i][j] = f[i][j]-(p[i+1][j]-p[i][j])*del_t/delx;
@@ -196,8 +224,8 @@ void update_velocity(int jmax, double (*u)[jmax+2], double (*v)[jmax+2], double 
         }
     }
 
-    for (int i=1; i<=imax; i++) {
-        for (int j=1; j<=jmax-1; j++) {
+    for (int i=1; i<=iMAX; i++) {
+        for (int j=1; j<=jMAX-1; j++) {
             /* only if both adjacent cells are fluid cells */
             if ((flag[i][j] & C_F) && (flag[i][j+1] & C_F)) {
                v[i][j] = g[i][j]-(p[i][j+1]-p[i][j])*del_t/dely;
@@ -211,20 +239,22 @@ void update_velocity(int jmax, double (*u)[jmax+2], double (*v)[jmax+2], double 
  * conditions (ie no particle moves more than one cell width in one
  * timestep). Otherwise the simulation becomes unstable.
  */
-void set_timestep_interval(int jmax, double *del_t, int imax,  double delx,
-    double dely, double (*u)[jmax+2], double (*v)[jmax+2], double Re, double tau)
+void set_timestep_interval(
+    DoubleMatrix& u, 
+    DoubleMatrix& v 
+    )
 {
     /* del_t satisfying CFL conditions */
     if (tau >= 1.0e-10) { /* else no time stepsize control */
         double umax = 1.0e-10;
         double vmax = 1.0e-10; 
-        for (int i=0; i<=imax+1; i++) {
-            for (int j=1; j<=jmax+1; j++) {
+        for (int i=0; i<=iMAX+1; i++) {
+            for (int j=1; j<=jMAX+1; j++) {
                 umax = max(fabs(u[i][j]), umax);
             }
         }
-        for (int i=1; i<=imax+1; i++) {
-            for (int j=0; j<=jmax+1; j++) {
+        for (int i=1; i<=iMAX+1; i++) {
+            for (int j=0; j<=jMAX+1; j++) {
                 vmax = max(fabs(v[i][j]), vmax);
             }
         }
