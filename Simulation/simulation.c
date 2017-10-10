@@ -26,7 +26,8 @@ void Simulation::compute_tentative_velocity()
     //f array written with [i][j] pattern
     //u array read with [i][j] [i+1][j] [i-1][j] pattern
     //v array read with [i][j] [i+1][j] [i+1][j-1] pattern
-    for (int i=1; i<=iMAX-1; i++) {
+    size_t i = 1;
+    Kokkos::paralell_for ( KOKKOS_LAMBDA () {
         for (int j=1; j<=jMAX; j++) {
             double du2dx = 0, duvdy = 0, laplu = 0;
             /* only if both adjacent cells are fluid cells */
@@ -49,7 +50,7 @@ void Simulation::compute_tentative_velocity()
                 f[i][j] = u[i][j];
             }
         }
-    }
+    });
 
     for (int i=1; i<=iMAX; i++) {
         for (int j=1; j<=jMAX-1; j++) {

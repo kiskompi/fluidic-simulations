@@ -1,13 +1,14 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
+#include "../kokkos/containers/src/Kokkos_Vector.hpp"
 #include <array>
 
-template<typename value_type, size_t sizeX, size_t sizeY>
+template<typename value_type>
 class Matrix{
 
 private:
-    std::array<std::array<value_type, sizeY>, sizeX> m_matrix;
+    Kokkos::vector<std::Kokkos::vector<value_type>> m_matrix;
 
 public:
     Matrix();

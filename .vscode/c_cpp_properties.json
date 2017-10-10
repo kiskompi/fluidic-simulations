@@ -29,6 +29,8 @@
                 "/usr/include/c++/7",
                 "/usr/local/include",
                 "/usr/include",
+                "kokkos/core",
+                "kokkos/containers",
                 "${workspaceRoot}",
                 "${workspaceRoot}/Matrix",
                 "${workspaceRoot}/Simulation"

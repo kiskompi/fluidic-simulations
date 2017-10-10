@@ -9,6 +9,7 @@
 #include <getopt.h>
 #include <sys/stat.h>
 
+#include "../kokkos/core/Kokkos_Core.hpp"
 #include "../Matrix/Matrix.hpp"
 #include "datadef.h"
 
@@ -17,8 +18,8 @@ public:
     constexpr static const int    iMAX       = 660;     /* Number of cells horizontally */
     constexpr static const int    jMAX       = 120;     /* Number of cells vertically   */
 
-    typedef Matrix<double, iMAX + 2, jMAX + 2>  DoubleMatrix;
-    typedef Matrix<char,   iMAX + 2, jMAX + 2>  CharMatrix;
+    typedef Matrix<double>  DoubleMatrix;
+    typedef Matrix<char>    CharMatrix;
 
     const double        xlength    = 22.0;    /* Width of simulated domain    */
     const double        ylength    = 4.1;     /* Height of simulated domain   */

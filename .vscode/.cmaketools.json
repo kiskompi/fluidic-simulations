@@ -23,13 +23,13 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/NightlyTest",
-                      "build/CMakeFiles/NightlyTest.rule"
+                      "build/CMakeFiles/ContinuousConfigure",
+                      "build/CMakeFiles/ContinuousConfigure.rule"
                     ]
                   }
                 ],
-                "fullName": "NightlyTest",
-                "name": "NightlyTest",
+                "fullName": "ContinuousConfigure",
+                "name": "ContinuousConfigure",
                 "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
                 "type": "UTILITY"
               },
@@ -39,13 +39,13 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/NightlyCoverage",
-                      "build/CMakeFiles/NightlyCoverage.rule"
+                      "build/CMakeFiles/ExperimentalSubmit",
+                      "build/CMakeFiles/ExperimentalSubmit.rule"
                     ]
                   }
                 ],
-                "fullName": "NightlyCoverage",
-                "name": "NightlyCoverage",
+                "fullName": "ExperimentalSubmit",
+                "name": "ExperimentalSubmit",
                 "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
                 "type": "UTILITY"
               },
@@ -55,29 +55,13 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/ExperimentalBuild",
-                      "build/CMakeFiles/ExperimentalBuild.rule"
+                      "build/CMakeFiles/ExperimentalMemCheck",
+                      "build/CMakeFiles/ExperimentalMemCheck.rule"
                     ]
                   }
                 ],
-                "fullName": "ExperimentalBuild",
-                "name": "ExperimentalBuild",
-                "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
-                "type": "UTILITY"
-              },
-              {
-                "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
-                "fileGroups": [
-                  {
-                    "isGenerated": true,
-                    "sources": [
-                      "build/CMakeFiles/ExperimentalUpdate",
-                      "build/CMakeFiles/ExperimentalUpdate.rule"
-                    ]
-                  }
-                ],
-                "fullName": "ExperimentalUpdate",
-                "name": "ExperimentalUpdate",
+                "fullName": "ExperimentalMemCheck",
+                "name": "ExperimentalMemCheck",
                 "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
                 "type": "UTILITY"
               },
@@ -119,13 +103,13 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/ExperimentalMemCheck",
-                      "build/CMakeFiles/ExperimentalMemCheck.rule"
+                      "build/CMakeFiles/Experimental",
+                      "build/CMakeFiles/Experimental.rule"
                     ]
                   }
                 ],
-                "fullName": "ExperimentalMemCheck",
-                "name": "ExperimentalMemCheck",
+                "fullName": "Experimental",
+                "name": "Experimental",
                 "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
                 "type": "UTILITY"
               },
@@ -135,46 +119,15 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/ExperimentalTest",
-                      "build/CMakeFiles/ExperimentalTest.rule"
+                      "build/CMakeFiles/NightlyStart",
+                      "build/CMakeFiles/NightlyStart.rule"
                     ]
                   }
                 ],
-                "fullName": "ExperimentalTest",
-                "name": "ExperimentalTest",
+                "fullName": "NightlyStart",
+                "name": "NightlyStart",
                 "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
                 "type": "UTILITY"
-              },
-              {
-                "artifacts": [
-                  "/home/andris/Documents/egyetem/tutored_research/git-project/build/fluidic_simulations"
-                ],
-                "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
-                "fileGroups": [
-                  {
-                    "compileFlags": "-g  ",
-                    "isGenerated": false,
-                    "language": "C",
-                    "sources": [
-                      "Simulation/simulation.c"
-                    ]
-                  },
-                  {
-                    "compileFlags": "-g  ",
-                    "isGenerated": false,
-                    "language": "CXX",
-                    "sources": [
-                      "main.cpp"
-                    ]
-                  }
-                ],
-                "fullName": "fluidic_simulations",
-                "linkFlags": "-rdynamic",
-                "linkLanguageFlags": "-g",
-                "linkerLanguage": "CXX",
-                "name": "fluidic_simulations",
-                "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
-                "type": "EXECUTABLE"
               },
               {
                 "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
@@ -189,6 +142,150 @@
                 ],
                 "fullName": "ContinuousMemCheck",
                 "name": "ContinuousMemCheck",
+                "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/NightlyTest",
+                      "build/CMakeFiles/NightlyTest.rule"
+                    ]
+                  }
+                ],
+                "fullName": "NightlyTest",
+                "name": "NightlyTest",
+                "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/NightlyCoverage",
+                      "build/CMakeFiles/NightlyCoverage.rule"
+                    ]
+                  }
+                ],
+                "fullName": "NightlyCoverage",
+                "name": "NightlyCoverage",
+                "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/ExperimentalCoverage",
+                      "build/CMakeFiles/ExperimentalCoverage.rule"
+                    ]
+                  }
+                ],
+                "fullName": "ExperimentalCoverage",
+                "name": "ExperimentalCoverage",
+                "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/NightlyUpdate",
+                      "build/CMakeFiles/NightlyUpdate.rule"
+                    ]
+                  }
+                ],
+                "fullName": "NightlyUpdate",
+                "name": "NightlyUpdate",
+                "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/ContinuousSubmit",
+                      "build/CMakeFiles/ContinuousSubmit.rule"
+                    ]
+                  }
+                ],
+                "fullName": "ContinuousSubmit",
+                "name": "ContinuousSubmit",
+                "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/NightlyMemoryCheck",
+                      "build/CMakeFiles/NightlyMemoryCheck.rule"
+                    ]
+                  }
+                ],
+                "fullName": "NightlyMemoryCheck",
+                "name": "NightlyMemoryCheck",
+                "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/ExperimentalConfigure",
+                      "build/CMakeFiles/ExperimentalConfigure.rule"
+                    ]
+                  }
+                ],
+                "fullName": "ExperimentalConfigure",
+                "name": "ExperimentalConfigure",
+                "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/ContinuousCoverage",
+                      "build/CMakeFiles/ContinuousCoverage.rule"
+                    ]
+                  }
+                ],
+                "fullName": "ContinuousCoverage",
+                "name": "ContinuousCoverage",
+                "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/Nightly",
+                      "build/CMakeFiles/Nightly.rule"
+                    ]
+                  }
+                ],
+                "fullName": "Nightly",
+                "name": "Nightly",
                 "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
                 "type": "UTILITY"
               },
@@ -262,22 +359,6 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/NightlyMemoryCheck",
-                      "build/CMakeFiles/NightlyMemoryCheck.rule"
-                    ]
-                  }
-                ],
-                "fullName": "NightlyMemoryCheck",
-                "name": "NightlyMemoryCheck",
-                "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
-                "type": "UTILITY"
-              },
-              {
-                "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
-                "fileGroups": [
-                  {
-                    "isGenerated": true,
-                    "sources": [
                       "build/CMakeFiles/NightlyBuild",
                       "build/CMakeFiles/NightlyBuild.rule"
                     ]
@@ -294,13 +375,13 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/ExperimentalCoverage",
-                      "build/CMakeFiles/ExperimentalCoverage.rule"
+                      "build/CMakeFiles/ExperimentalUpdate",
+                      "build/CMakeFiles/ExperimentalUpdate.rule"
                     ]
                   }
                 ],
-                "fullName": "ExperimentalCoverage",
-                "name": "ExperimentalCoverage",
+                "fullName": "ExperimentalUpdate",
+                "name": "ExperimentalUpdate",
                 "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
                 "type": "UTILITY"
               },
@@ -342,38 +423,6 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/NightlyUpdate",
-                      "build/CMakeFiles/NightlyUpdate.rule"
-                    ]
-                  }
-                ],
-                "fullName": "NightlyUpdate",
-                "name": "NightlyUpdate",
-                "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
-                "type": "UTILITY"
-              },
-              {
-                "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
-                "fileGroups": [
-                  {
-                    "isGenerated": true,
-                    "sources": [
-                      "build/CMakeFiles/NightlyStart",
-                      "build/CMakeFiles/NightlyStart.rule"
-                    ]
-                  }
-                ],
-                "fullName": "NightlyStart",
-                "name": "NightlyStart",
-                "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
-                "type": "UTILITY"
-              },
-              {
-                "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
-                "fileGroups": [
-                  {
-                    "isGenerated": true,
-                    "sources": [
                       "build/CMakeFiles/NightlySubmit",
                       "build/CMakeFiles/NightlySubmit.rule"
                     ]
@@ -390,13 +439,13 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/ContinuousCoverage",
-                      "build/CMakeFiles/ContinuousCoverage.rule"
+                      "build/CMakeFiles/ExperimentalTest",
+                      "build/CMakeFiles/ExperimentalTest.rule"
                     ]
                   }
                 ],
-                "fullName": "ContinuousCoverage",
-                "name": "ContinuousCoverage",
+                "fullName": "ExperimentalTest",
+                "name": "ExperimentalTest",
                 "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
                 "type": "UTILITY"
               },
@@ -406,102 +455,53 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/Nightly",
-                      "build/CMakeFiles/Nightly.rule"
+                      "build/CMakeFiles/ExperimentalBuild",
+                      "build/CMakeFiles/ExperimentalBuild.rule"
                     ]
                   }
                 ],
-                "fullName": "Nightly",
-                "name": "Nightly",
+                "fullName": "ExperimentalBuild",
+                "name": "ExperimentalBuild",
                 "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
                 "type": "UTILITY"
               },
               {
+                "artifacts": [
+                  "/home/andris/Documents/egyetem/tutored_research/git-project/build/fluidic_simulations"
+                ],
                 "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
                 "fileGroups": [
                   {
-                    "isGenerated": true,
+                    "compileFlags": "-g  ",
+                    "isGenerated": false,
+                    "language": "C",
                     "sources": [
-                      "build/CMakeFiles/Experimental",
-                      "build/CMakeFiles/Experimental.rule"
+                      "Simulation/simulation.c"
                     ]
-                  }
-                ],
-                "fullName": "Experimental",
-                "name": "Experimental",
-                "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
-                "type": "UTILITY"
-              },
-              {
-                "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
-                "fileGroups": [
+                  },
                   {
-                    "isGenerated": true,
+                    "compileFlags": "-g  ",
+                    "isGenerated": false,
+                    "language": "CXX",
                     "sources": [
-                      "build/CMakeFiles/ExperimentalConfigure",
-                      "build/CMakeFiles/ExperimentalConfigure.rule"
+                      "main.cpp"
                     ]
                   }
                 ],
-                "fullName": "ExperimentalConfigure",
-                "name": "ExperimentalConfigure",
+                "fullName": "fluidic_simulations",
+                "linkFlags": "-rdynamic",
+                "linkLanguageFlags": "-g",
+                "linkerLanguage": "CXX",
+                "name": "fluidic_simulations",
                 "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
-                "type": "UTILITY"
-              },
-              {
-                "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
-                "fileGroups": [
-                  {
-                    "isGenerated": true,
-                    "sources": [
-                      "build/CMakeFiles/ContinuousConfigure",
-                      "build/CMakeFiles/ContinuousConfigure.rule"
-                    ]
-                  }
-                ],
-                "fullName": "ContinuousConfigure",
-                "name": "ContinuousConfigure",
-                "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
-                "type": "UTILITY"
-              },
-              {
-                "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
-                "fileGroups": [
-                  {
-                    "isGenerated": true,
-                    "sources": [
-                      "build/CMakeFiles/ExperimentalSubmit",
-                      "build/CMakeFiles/ExperimentalSubmit.rule"
-                    ]
-                  }
-                ],
-                "fullName": "ExperimentalSubmit",
-                "name": "ExperimentalSubmit",
-                "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
-                "type": "UTILITY"
-              },
-              {
-                "buildDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
-                "fileGroups": [
-                  {
-                    "isGenerated": true,
-                    "sources": [
-                      "build/CMakeFiles/ContinuousSubmit",
-                      "build/CMakeFiles/ContinuousSubmit.rule"
-                    ]
-                  }
-                ],
-                "fullName": "ContinuousSubmit",
-                "name": "ContinuousSubmit",
-                "sourceDirectory": "/home/andris/Documents/egyetem/tutored_research/git-project",
-                "type": "UTILITY"
+                "type": "EXECUTABLE"
               }
             ]
           }
         ]
       }
     ],
-    "cookie": "0.48759151423389824",
+    "cookie": "0.8404627555182822",
     "inReplyTo": "codemodel",
     "type": "reply"
   }
