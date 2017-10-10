@@ -29,7 +29,9 @@
                 "/usr/include/c++/7",
                 "/usr/local/include",
                 "/usr/include",
-                "${workspaceRoot}"
+                "${workspaceRoot}",
+                "${workspaceRoot}/Matrix",
+                "${workspaceRoot}/Simulation"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",
@@ -38,7 +40,9 @@
                     "/usr/include/c++/7",
                     "/usr/local/include",
                     "/usr/include",
-                    "${workspaceRoot}"
+                    "${workspaceRoot}",
+                    "${workspaceRoot}/Matrix",
+                    "${workspaceRoot}/Simulation"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""

@@ -1,0 +1,13 @@
+[
+{
+  "directory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
+  "command": "/usr/bin/c++    -g   -o CMakeFiles/fluidic_simulations.dir/main.cpp.o -c /home/andris/Documents/egyetem/tutored_research/git-project/main.cpp",
+  "file": "/home/andris/Documents/egyetem/tutored_research/git-project/main.cpp"
+},
+
+{
+  "directory": "/home/andris/Documents/egyetem/tutored_research/git-project/build",
+  "command": "/usr/bin/cc   -g   -o CMakeFiles/fluidic_simulations.dir/Simulation/simulation.c.o   -c /home/andris/Documents/egyetem/tutored_research/git-project/Simulation/simulation.c",
+  "file": "/home/andris/Documents/egyetem/tutored_research/git-project/Simulation/simulation.c"
+}
+]

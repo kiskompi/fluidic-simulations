@@ -1,4 +1,3 @@
-#include "typedefs.hpp"
 enum Cell{
     C_F    =  0x0010,   /* This cell is a fluid cell */
     C_B    =  0x0000,   /* This cell is an obstacle/boundary cell */
@@ -13,13 +12,14 @@ enum Cell{
     B_NSEW =  (B_N | B_S | B_E | B_W),
 };
 
+
 template<typename LT, typename RT>
-unsigned int operator |(LT lval, RT rval) {
+constexpr inline unsigned int operator |(LT lval, RT rval) {
     return static_cast<unsigned int>(static_cast<unsigned int>(lval) | static_cast<unsigned int>(rval));
 }
 
 template<typename LT, typename RT>
-unsigned int operator &(LT lval, RT rval) {
+constexpr inline unsigned int operator &(LT lval, RT rval) {
     return static_cast<unsigned int>(static_cast<unsigned int>(lval) & static_cast<unsigned int>(rval));
 }
 
@@ -30,15 +30,3 @@ unsigned int operator &(LT lval, RT rval) {
 #define eps_W ((flag[i-1][j] & C_F)?1:0)
 #define eps_N ((flag[i][j+1] & C_F)?1:0)
 #define eps_S ((flag[i][j-1] & C_F)?1:0)
-
-void write_ppm(
-               DoubleMatrix& u, 
-               DoubleMatrix& v, 
-               DoubleMatrix& p, 
-               CharMatrix&   flag,
-               char*  outname, 
-               int    iters, 
-               int    freq);
-
-unsigned int simplest_checksum_char (CharMatrix& in);
-double       simplest_checksum      (DoubleMatrix& in);
