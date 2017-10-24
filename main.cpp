@@ -15,6 +15,7 @@
 
 int main(int argc, char *argv[])
 {   
+    Kokkos::initialize();
     int    output           = 0;
     int    output_frequency = 0;
     char*  outname          = nullptr;
@@ -55,6 +56,7 @@ int main(int argc, char *argv[])
     	//   write_ppm(sim, outname, iters, output_frequency);
     	// }
     }
+    Kokkos::finalize();
     return 0;
 }
 

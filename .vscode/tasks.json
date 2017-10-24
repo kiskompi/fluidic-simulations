@@ -6,7 +6,7 @@
         {
             "taskName": "Build",
             "type": "shell",
-            "command": "g++ -std=c++17 main.cpp Simulation/simulation.c -o runnable -Larray -O3 -Ofast",
+            "command": "g++ -Ikokkos/core/ -Ikokkos/core/src -std=c++11 main.cpp Simulation/simulation.c -o runnable -Larray -O3 -Ofast",
             "group": {
                 "kind": "build",
                 "isDefault": true

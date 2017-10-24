@@ -1,38 +1,39 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-#include "../kokkos/containers/src/Kokkos_Vector.hpp"
-#include <array>
+#include <Kokkos_Vector.hpp>
 
 template<typename value_type>
 class Matrix{
 
 private:
-    Kokkos::vector<std::Kokkos::vector<value_type>> m_matrix;
+    Kokkos::vector<Kokkos::vector<value_type>> m_matrix;
 
 public:
     Matrix();
     ~Matrix(){}
 
-    size_t get_sizeX() const {return sizeX;}
-    size_t get_sizeY() const {return sizeY;}
+    size_t get_sizeX() const {return m_matrix.size();}
+    size_t get_sizeY() const {return m_matrix[0].size();}
 
-    Matrix   operator=(const value_type &rval);
-    std::array<value_type, sizeY>& operator[](const size_t i) {
+    Kokkos::vector<value_type>& operator=(const value_type &rval);
+    Kokkos::vector<value_type>& operator[](const size_t i) {
         return m_matrix[i];
     }
-    const std::array<value_type, sizeY>& operator[](const size_t i) const {
+    const Kokkos::vector<value_type>& operator[](const size_t i) const {
         return m_matrix[i];
     }
 
 };
 
-template<typename T, size_t X, size_t Y>
-inline Matrix<T, X, Y>::Matrix():
-    m_matrix(std::array<std::array<T, Y>, X>())
+template<typename T>
+inline Matrix<T>::Matrix():
+    m_matrix (Kokkos::vector<Kokkos::vector<T>>())
 {
-    for (auto arr: m_matrix){
-        arr.fill(0);
+    for (Kokkos::vector<T> arr: m_matrix){
+        for (T elem: arr){
+            elem = 0;
+        }
     }
 }
 #endif

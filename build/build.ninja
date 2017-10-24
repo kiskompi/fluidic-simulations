@@ -79,12 +79,12 @@ build ContinuousMemCheck: phony CMakeFiles/ContinuousMemCheck
 build cmake_object_order_depends_target_fluidic_simulations: phony
 build CMakeFiles/fluidic_simulations.dir/main.cpp.o: CXX_COMPILER__fluidic_simulations ../main.cpp || cmake_object_order_depends_target_fluidic_simulations
   DEP_FILE = CMakeFiles/fluidic_simulations.dir/main.cpp.o.d
-  FLAGS = -g
+  FLAGS = -g   -std=c++11
   OBJECT_DIR = CMakeFiles/fluidic_simulations.dir
   OBJECT_FILE_DIR = CMakeFiles/fluidic_simulations.dir
 build CMakeFiles/fluidic_simulations.dir/Simulation/simulation.c.o: C_COMPILER__fluidic_simulations ../Simulation/simulation.c || cmake_object_order_depends_target_fluidic_simulations
   DEP_FILE = CMakeFiles/fluidic_simulations.dir/Simulation/simulation.c.o.d
-  FLAGS = -g
+  FLAGS = -g   -std=c++11
   OBJECT_DIR = CMakeFiles/fluidic_simulations.dir
   OBJECT_FILE_DIR = CMakeFiles/fluidic_simulations.dir/Simulation
 

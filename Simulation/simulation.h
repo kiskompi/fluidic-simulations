@@ -9,7 +9,7 @@
 #include <getopt.h>
 #include <sys/stat.h>
 
-#include "../kokkos/core/Kokkos_Core.hpp"
+#include <Kokkos_Core.hpp>
 #include "../Matrix/Matrix.hpp"
 #include "datadef.h"
 

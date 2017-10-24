@@ -27,7 +27,8 @@ void Simulation::compute_tentative_velocity()
     //u array read with [i][j] [i+1][j] [i-1][j] pattern
     //v array read with [i][j] [i+1][j] [i+1][j-1] pattern
     size_t i = 1;
-    Kokkos::paralell_for ( KOKKOS_LAMBDA () {
+    Kokkos::parallel_for (15,
+	KOKKOS_LAMBDA (size_t i) {
         for (int j=1; j<=jMAX; j++) {
             double du2dx = 0, duvdy = 0, laplu = 0;
             /* only if both adjacent cells are fluid cells */
@@ -210,7 +211,8 @@ void Simulation::update_velocity()
 }
 
 
-/* Set the timestep size so that we satisfy the Courant-Friedrichs-Lewy
+/* 
+ * Set the timestep size so that we satisfy the Courant-Friedrichs-Lewy
  * conditions (ie no particle moves more than one cell width in one
  * timestep). Otherwise the simulation becomes unstable.
  */
@@ -275,6 +277,7 @@ void Simulation::init_flag()
     }
 
     /* flags for boundary cells */
+    // nem kell kokkosozni
     ibound = 0;
     for (int i = 1; i <= iMAX; i++) {
         for (int j = 1; j <= jMAX; j++) {
