@@ -31,23 +31,23 @@ void Simulation::compute_tentative_velocity()
         for (int j=1; j<=jMAX; j++) {
             double du2dx = 0, duvdy = 0, laplu = 0;
             /* only if both adjacent cells are fluid cells */
-            if ((flag[i][j] & C_F) && (flag[i+1][j] & C_F)) {
-                du2dx = ((u[i][j]+u[i+1][j])*(u[i][j]+u[i+1][j])+
-                         gamma*fabs(u[i][j]+u[i+1][j])*(u[i][j]-u[i+1][j])-
-                         (u[i-1][j]+u[i][j])*(u[i-1][j]+u[i][j])-
-                         gamma*fabs(u[i-1][j]+u[i][j])*(u[i-1][j]-u[i][j]))
+            if ((flag(i,j) & C_F) && (flag(i+1,j) & C_F)) {
+                du2dx = ((u(i,j)+u(i+1,j))*(u(i,j)+u(i+1,j))+
+                         gamma*fabs(u(i,j)+u(i+1,j))*(u(i,j)-u(i+1,j))-
+                         (u(i-1,j)+u(i,j))*(u(i-1,j)+u(i,j))-
+                         gamma*fabs(u(i-1,j)+u(i,j))*(u(i-1,j)-u(i,j)))
                         /(4.0*delx);
-                duvdy = ((v[i][j]+v[i+1][j])*(u[i][j]+u[i][j+1])+
-                         gamma*fabs(v[i][j]+v[i+1][j])*(u[i][j]-u[i][j+1])-
-                         (v[i][j-1]+v[i+1][j-1])*(u[i][j-1]+u[i][j])-
-                         gamma*fabs(v[i][j-1]+v[i+1][j-1])*(u[i][j-1]-u[i][j]))
+                duvdy = ((v(i,j)+v(i+1,j))*(u(i,j)+u(i,j+1))+
+                         gamma*fabs(v(i,j)+v(i+1,j))*(u(i,j)-u(i,j+1))-
+                         (v(i,j-1)+v(i+1,j-1))*(u(i,j-1)+u(i,j))-
+                         gamma*fabs(v(i,j-1)+v(i+1,j-1))*(u(i,j-1)-u(i,j)))
                         /(4.0*dely);
-                laplu = (u[i+1][j]-2.0*u[i][j]+u[i-1][j])/delx/delx+
-                        (u[i][j+1]-2.0*u[i][j]+u[i][j-1])/dely/dely;
+                laplu = (u(i+1,j)-2.0*u(i,j)+u(i-1,j))/delx/delx+
+                        (u(i,j+1)-2.0*u(i,j)+u(i,j-1))/dely/dely;
 
-                f[i][j] = u[i][j]+step_delta*(laplu/reynolds-du2dx-duvdy);
+                f(i,j) = u(i,j)+step_delta*(laplu/reynolds-du2dx-duvdy);
             } else {
-                f[i][j] = u[i][j];
+                f(i,j) = u(i,j);
             }
         }
     });
@@ -55,37 +55,37 @@ void Simulation::compute_tentative_velocity()
     for (int i=1; i<=iMAX; i++) {
         for (int j=1; j<=jMAX-1; j++) {
             /* only if both adjacent cells are fluid cells */
-            if ((flag[i][j] & C_F) && (flag[i][j+1] & C_F)) {
+            if ((flag(i,j) & C_F) && (flag(i,j+1) & C_F)) {
                 double duvdx = 0, dv2dy = 0, laplv = 0;
-                duvdx = ((u[i][j]+u[i][j+1])*(v[i][j]+v[i+1][j])+
-                         gamma*fabs(u[i][j]+u[i][j+1])*(v[i][j]-v[i+1][j])-
-                         (u[i-1][j]+u[i-1][j+1])*(v[i-1][j]+v[i][j])-
-                         gamma*fabs(u[i-1][j]+u[i-1][j+1])*(v[i-1][j]-v[i][j]))
+                duvdx = ((u(i,j)+u(i,j+1))*(v(i,j)+v(i+1,j))+
+                         gamma*fabs(u(i,j)+u(i,j+1))*(v(i,j)-v(i+1,j))-
+                         (u(i-1,j)+u(i-1,j+1))*(v(i-1,j)+v(i,j))-
+                         gamma*fabs(u(i-1,j)+u(i-1,j+1))*(v(i-1,j)-v(i,j)))
                         /(4.0*delx);
-                dv2dy = ((v[i][j]+v[i][j+1])*(v[i][j]+v[i][j+1])+
-                         gamma*fabs(v[i][j]+v[i][j+1])*(v[i][j]-v[i][j+1])-
-                         (v[i][j-1]+v[i][j])*(v[i][j-1]+v[i][j])-
-                         gamma*fabs(v[i][j-1]+v[i][j])*(v[i][j-1]-v[i][j]))
+                dv2dy = ((v(i,j)+v(i,j+1))*(v(i,j)+v(i,j+1))+
+                         gamma*fabs(v(i,j)+v(i,j+1))*(v(i,j)-v(i,j+1))-
+                         (v(i,j-1)+v(i,j))*(v(i,j-1)+v(i,j))-
+                         gamma*fabs(v(i,j-1)+v(i,j))*(v(i,j-1)-v(i,j)))
                         /(4.0*dely);
 
-                laplv = (v[i+1][j]-2.0*v[i][j]+v[i-1][j])/delx/delx+
-                        (v[i][j+1]-2.0*v[i][j]+v[i][j-1])/dely/dely;
+                laplv = (v(i+1,j)-2.0*v(i,j)+v(i-1,j))/delx/delx+
+                        (v(i,j+1)-2.0*v(i,j)+v(i,j-1))/dely/dely;
 
-                g[i][j] = v[i][j]+step_delta*(laplv/reynolds-duvdx-dv2dy);
+                g(i,j) = v(i,j)+step_delta*(laplv/reynolds-duvdx-dv2dy);
             } else {
-                g[i][j] = v[i][j];
+                g(i,j) = v(i,j);
             }
         }
     }
 
     /* f & g at external boundaries */
     for (int j=1; j<=jMAX; j++) {
-        f[0][j]    = u[0][j];
-        f[iMAX][j] = u[iMAX][j];
+        f(0,j)    = u(0,j);
+        f(iMAX,j) = u(iMAX,j);
     }
     for (int i=1; i<=iMAX; i++) {
-        g[i][0]    = v[i][0];
-        g[i][jMAX] = v[i][jMAX];
+        g(i,0)    = v(i,0);
+        g(i,jMAX) = v(i,jMAX);
     }
 }
 
@@ -95,10 +95,10 @@ void Simulation::compute_rhs()
 {
     for (int i=1; i<=iMAX; i++) {
         for (int j=1; j<=jMAX; j++) {
-            if (flag[i][j] & C_F) {
+            if (flag(i,j) & C_F) {
                 /* only for fluid and non-surface cells */
-                rhs[i][j] = ((f[i][j]-f[i-1][j])/delx +
-                             (g[i][j]-g[i][j-1])/dely) / step_delta;
+                rhs(i,j) = ((f(i,j)-f(i-1,j))/delx +
+                             (g(i,j)-g(i,j-1))/dely) / step_delta;
             }
         }
     }
@@ -119,8 +119,8 @@ int Simulation::poisson()
     /* Calculate sum of squares */
     for (int i = 1; i <= iMAX; i++) {
         for (int j=1; j<=jMAX; j++) {
-            if (flag[i][j] & C_F) {
-                p0 += p[i][j]*p[i][j];
+            if (flag(i,j) & C_F) {
+                p0 += p(i,j)*p(i,j);
             }
         }
     }
@@ -140,21 +140,21 @@ int Simulation::poisson()
                     if ((i+j) % 2 != rb) {
                         continue;
                     }
-                    if (flag[i][j] == (C_F | B_NSEW)) {
+                    if (flag(i,j) == (C_F | B_NSEW)) {
                         /* five point star for interior fluid cells */
-                        p[i][j] = (1.-omega)*p[i][j] -
+                        p(i,j) = (1.-omega)*p(i,j) -
                                   beta_2*(
-                                      (p[i+1][j]+p[i-1][j])*rdx2
-                                      + (p[i][j+1]+p[i][j-1])*rdy2
-                                      -  rhs[i][j]);
-                    } else if (flag[i][j] & C_F) {
+                                      (p(i+1,j)+p(i-1,j))*rdx2
+                                      + (p(i,j+1)+p(i,j-1))*rdy2
+                                      -  rhs(i,j));
+                    } else if (flag(i,j) & C_F) {
                         /* modified star near boundary */
                         double beta_mod = -omega/((eps_E+eps_W)*rdx2+(eps_N+eps_S)*rdy2);
-                        p[i][j] = (1.-omega)*p[i][j] -
+                        p(i,j) = (1.-omega)*p(i,j) -
                                   beta_mod*(
-                                      (eps_E*p[i+1][j]+eps_W*p[i-1][j])*rdx2
-                                      + (eps_N*p[i][j+1]+eps_S*p[i][j-1])*rdy2
-                                      - rhs[i][j]);
+                                      (eps_E*p(i+1,j)+eps_W*p(i-1,j))*rdx2
+                                      + (eps_N*p(i,j+1)+eps_S*p(i,j-1))*rdy2
+                                      - rhs(i,j));
                     }
                 } /* end of j */
             } /* end of i */
@@ -164,12 +164,12 @@ int Simulation::poisson()
         double resl = 0.0;
         for (int i = 1; i <= iMAX; i++) {
             for (int j = 1; j <= jMAX; j++) {
-                if (flag[i][j] & C_F) {
+                if (flag(i,j) & C_F) {
                     /* only fluid cells */
-                    double add = (eps_E*(p[i+1][j]-p[i][j]) -
-                                  eps_W*(p[i][j]-p[i-1][j])) * rdx2  +
-                                 (eps_N*(p[i][j+1]-p[i][j]) -
-                                  eps_S*(p[i][j]-p[i][j-1])) * rdy2  -  rhs[i][j];
+                    double add = (eps_E*(p(i+1,j)-p(i,j)) -
+                                  eps_W*(p(i,j)-p(i-1,j))) * rdx2  +
+                                 (eps_N*(p(i,j+1)-p(i,j)) -
+                                  eps_S*(p(i,j)-p(i,j-1))) * rdy2  -  rhs(i,j);
                     resl += add*add;
                 }
             }
@@ -193,8 +193,8 @@ void Simulation::update_velocity()
     for (int i=1; i<=iMAX-1; i++) {
         for (int j=1; j<=jMAX; j++) {
             /* only if both adjacent cells are fluid cells */
-            if ((flag[i][j] & C_F) && (flag[i+1][j] & C_F)) {
-                u[i][j] = f[i][j]-(p[i+1][j]-p[i][j])*step_delta/delx;
+            if ((flag(i,j) & C_F) && (flag(i+1,j) & C_F)) {
+                u(i,j) = f(i,j)-(p(i+1,j)-p(i,j))*step_delta/delx;
             }
         }
     }
@@ -202,8 +202,8 @@ void Simulation::update_velocity()
     for (int i=1; i<=iMAX; i++) {
         for (int j=1; j<=jMAX-1; j++) {
             /* only if both adjacent cells are fluid cells */
-            if ((flag[i][j] & C_F) && (flag[i][j+1] & C_F)) {
-                v[i][j] = g[i][j]-(p[i][j+1]-p[i][j])*step_delta/dely;
+            if ((flag(i,j) & C_F) && (flag(i,j+1) & C_F)) {
+                v(i,j) = g(i,j)-(p(i,j+1)-p(i,j))*step_delta/dely;
             }
         }
     }
@@ -223,12 +223,12 @@ void Simulation::set_timestep_interval()
         double vmax = 1.0e-10;
         for (int i=0; i<=iMAX+1; i++) {
             for (int j=1; j<=jMAX+1; j++) {
-                umax = max(fabs(u[i][j]), umax);
+                umax = max(fabs(u(i,j)), umax);
             }
         }
         for (int i=1; i<=iMAX+1; i++) {
             for (int j=0; j<=jMAX+1; j++) {
-                vmax = max(fabs(v[i][j]), vmax);
+                vmax = max(fabs(v(i,j)), vmax);
             }
         }
 
@@ -260,19 +260,19 @@ void Simulation::init_flag()
         for (int j = 1; j <= jMAX; j++) {
             const int x = (i - 0.5) * delx - mx;
             const int y = (j - 0.5) * dely - my;
-            flag[i][j] = (x * x + y * y <= rad1 * rad1) ? C_B : C_F;
+            flag(i,j) = (x * x + y * y <= rad1 * rad1) ? C_B : C_F;
         }
     }
 
     /* Mark the north & south boundary cells */
     for (int i = 0; i <= iMAX + 1; i++) {
-        flag[i][0]      = C_B;
-        flag[i][jMAX+1] = C_B;
+        flag(i,0)      = C_B;
+        flag(i,jMAX+1) = C_B;
     }
     /* Mark the east and west boundary cells */
     for (int j = 1; j <= jMAX; j++) {
-        flag[0][j]      = C_B;
-        flag[iMAX+2][j] = C_B;
+        flag(0,j)      = C_B;
+        flag(iMAX+2,j) = C_B;
     }
 
     /* flags for boundary cells */
@@ -280,12 +280,12 @@ void Simulation::init_flag()
     ibound = 0;
     for (int i = 1; i <= iMAX; i++) {
         for (int j = 1; j <= jMAX; j++) {
-            if (!(flag[i][j] & C_F)) {
+            if (!(flag(i,j) & C_F)) {
                 ibound++;
-                if (flag[i-1][j] & C_F) flag[i][j] = flag[i][j] | B_W;
-                if (flag[i+1][j] & C_F) flag[i][j] = flag[j][j] | B_E;
-                if (flag[i][j-1] & C_F) flag[i][j] = flag[j][j] | B_S;
-                if (flag[i][j+1] & C_F) flag[i][j] = flag[j][j] | B_N;
+                if (flag(i-1,j) & C_F) flag(i,j) = flag(i,j) | B_W;
+                if (flag(i+1,j) & C_F) flag(i,j) = flag(j,j) | B_E;
+                if (flag(i,j-1) & C_F) flag(i,j) = flag(j,j) | B_S;
+                if (flag(i,j+1) & C_F) flag(i,j) = flag(j,j) | B_N;
             }
         }
     }
@@ -295,22 +295,22 @@ void Simulation::apply_boundary_conditions()
 {
     for (int j=0; j<=jMAX+1; j++) {
         /* Fluid freely flows in from the west */
-        u[0][j] = u[1][j];
-        v[0][j] = v[1][j];
+        u(0,j) = u(1,j);
+        v(0,j) = v(1,j);
 
         /* Fluid freely flows out to the east */
-        u[iMAX][j]   = u[iMAX-1][j];
-        v[iMAX+1][j] = v[iMAX][j];
+        u(iMAX,j)   = u(iMAX-1,j);
+        v(iMAX+1,j) = v(iMAX,j);
     }
 
     for (int i=0; i<=iMAX+1; i++) {
         /* The vertical velocity approaches 0 at the north and south
         * boundaries, but fluid flows freely in the horizontal direction */
-        v[i][jMAX]   = 0.0;
-        u[i][jMAX+1] = u[i][jMAX];
+        v(i,jMAX)   = 0.0;
+        u(i,jMAX+1) = u(i,jMAX);
 
-        v[i][0] = 0.0;
-        u[i][0] = u[i][1];
+        v(i,0) = 0.0;
+        u(i,0) = u(i,1);
     }
 
     /* Apply no-slip boundary conditions to cells that are adjacent to
@@ -320,28 +320,28 @@ void Simulation::apply_boundary_conditions()
 
     for (int i = 1; i <= iMAX; i++) {
         for (int j = 1; j <= jMAX; j++) {
-            if (flag[i][j] & Cell::B_NSEW) {
-                switch (flag[i][j]) {
+            if (flag(i,j) & Cell::B_NSEW) {
+                switch (flag(i,j)) {
                 case Cell::B_N:
-                    u[i][j]   = -u[i][j+1];
+                    u(i,j)   = -u(i,j+1);
                     break;
                 case Cell::B_E:
-                    u[i][j]   = 0.0;
+                    u(i,j)   = 0.0;
                     break;
                 case Cell::B_NE:
-                    u[i][j]   = 0.0;
+                    u(i,j)   = 0.0;
                     break;
                 case Cell::B_SE:
-                    u[i][j]   = 0.0;
+                    u(i,j)   = 0.0;
                     break;
                 case Cell::B_NW:
-                    u[i][j]   = -u[i][j+1];
+                    u(i,j)   = -u(i,j+1);
                     break;
                 case Cell::B_S:
-                    u[i][j]   = -u[i][j-1];
+                    u(i,j)   = -u(i,j-1);
                     break;
                 case Cell::B_SW:
-                    u[i][j]   = -u[i][j-1];
+                    u(i,j)   = -u(i,j-1);
                     break;
                 }
             }
@@ -349,28 +349,28 @@ void Simulation::apply_boundary_conditions()
     }
     for (int i=0; i<=(iMAX-1); i++) {
         for (int j=1; j<=jMAX; j++) {
-            if (flag[i+1][j] & Cell::B_NSEW) {
-                switch (flag[i+1][j]) {
+            if (flag(i+1,j) & Cell::B_NSEW) {
+                switch (flag(i+1,j)) {
                 case Cell::B_N:
-                    u[i][j] = -u[i][j+1];
+                    u(i,j) = -u(i,j+1);
                     break;
                 case Cell::B_W:
-                    u[i][j] = 0.0;
+                    u(i,j) = 0.0;
                     break;
                 case Cell::B_NE:
-                    u[i][j] = -u[i][j+1];
+                    u(i,j) = -u(i,j+1);
                     break;
                 case Cell::B_SW:
-                    u[i][j] = 0.0;
+                    u(i,j) = 0.0;
                     break;
                 case Cell::B_NW:
-                    u[i][j] = 0.0;
+                    u(i,j) = 0.0;
                     break;
                 case Cell::B_S:
-                    u[i][j] = -u[i][j-1];
+                    u(i,j) = -u(i,j-1);
                     break;
                 case Cell::B_SE:
-                    u[i][j] = -u[i][j-1];
+                    u(i,j) = -u(i,j-1);
                     break;
                 }
             }
@@ -380,28 +380,28 @@ void Simulation::apply_boundary_conditions()
 
     for (int i=1; i<=iMAX; i++) {
         for (int j=1; j<=jMAX; j++) {
-            if (flag[i][j] & Cell::B_NSEW) {
-                switch (flag[i][j]) {
+            if (flag(i,j) & Cell::B_NSEW) {
+                switch (flag(i,j)) {
                 case Cell::B_N:
-                    v[i][j]   = 0.0;
+                    v(i,j)   = 0.0;
                     break;
                 case Cell::B_E:
-                    v[i][j]   = -v[i+1][j];
+                    v(i,j)   = -v(i+1,j);
                     break;
                 case Cell::B_NE:
-                    v[i][j]   = 0.0;
+                    v(i,j)   = 0.0;
                     break;
                 case Cell::B_SE:
-                    v[i][j]   = -v[i+1][j];
+                    v(i,j)   = -v(i+1,j);
                     break;
                 case Cell::B_NW:
-                    v[i][j]   = 0.0;
+                    v(i,j)   = 0.0;
                     break;
                 case Cell::B_W:
-                    v[i][j]   = -v[i-1][j];
+                    v(i,j)   = -v(i-1,j);
                     break;
                 case Cell::B_SW:
-                    v[i][j]   = -v[i-1][j];
+                    v(i,j)   = -v(i-1,j);
                     break;
                 }
             }
@@ -410,28 +410,28 @@ void Simulation::apply_boundary_conditions()
 
     for (int i=1; i<=iMAX; i++) {
         for (int j=0; j<=(jMAX-1); j++) {
-            if (flag[i][j+1] & Cell::B_NSEW) {
-                switch (flag[i][j+1]) {
+            if (flag(i,j+1) & Cell::B_NSEW) {
+                switch (flag(i,j+1)) {
                 case Cell::B_E:
-                    v[i][j] = -v[i+1][j];
+                    v(i,j) = -v(i+1,j);
                     break;
                 case Cell::B_S:
-                    v[i][j] = 0.0;
+                    v(i,j) = 0.0;
                     break;
                 case Cell::B_NE:
-                    v[i][j] = -v[i+1][j];
+                    v(i,j) = -v(i+1,j);
                     break;
                 case Cell::B_SE:
-                    v[i][j] = 0.0;
+                    v(i,j) = 0.0;
                     break;
                 case Cell::B_SW:
-                    v[i][j] = 0.0;
+                    v(i,j) = 0.0;
                     break;
                 case Cell::B_W:
-                    v[i][j] = -v[i-1][j];
+                    v(i,j) = -v(i-1,j);
                     break;
                 case Cell::B_NW:
-                    v[i][j] = -v[i-1][j];
+                    v(i,j) = -v(i-1,j);
                     break;
                 }
             }
@@ -441,10 +441,10 @@ void Simulation::apply_boundary_conditions()
     /* Finally, fix the horizontal velocity at the  western edge to have
     * a continual flow of fluid into the simulation.
     */
-    v[0][0] = 2*vi-v[1][0];
+    v(0,0) = 2*vi-v(1,0);
     for (int j=1; j<=jMAX; j++) {
-        u[0][j] = ui;
-        v[0][j] = 2*vi-v[1][j];
+        u(0,j) = ui;
+        v(0,j) = 2*vi-v(1,j);
     }
 }
 
@@ -457,10 +457,10 @@ void  Simulation::calc_psi_zeta(DoubleMatrix& zeta) const
     for (size_t i=1; i<=iMAX-1; i++) {
         for (size_t j=1; j<=jMAX-1; j++) {
             if (is_surrounded(i, j)) {
-                zeta[i][j] = (u[i][j+1]-u[i][j])/dely-
-                             (v[i+1][j]-v[i][j])/delx;
+                zeta(i,j) = (u(i,j+1)-u(i,j))/dely-
+                             (v(i+1,j)-v(i,j))/delx;
             } else {
-                zeta[i][j] = 0.0;
+                zeta(i,j) = 0.0;
             }
         }
     }
@@ -504,19 +504,19 @@ void write_ppm(const Simulation& sim,
     for (size_t j = 1; j < Simulation::jMAX+1 ; j++) {
         for (size_t i = 1; i < Simulation::iMAX+1 ; i++) {
             int r = 0, g = 0, b = 0;
-            if (!(sim.get_flag()[i][j] & C_F)) {
+            if (!(sim.get_flag()(i,j) & C_F)) {
                 r = 0;
                 b = 0;
                 g = 255;
             } else {
                 if (outmode == 0) {
-                    double z = (i < Simulation::iMAX && j < Simulation::jMAX) ? zeta[i][j] : 0.0;
+                    double z = (i < Simulation::iMAX && j < Simulation::jMAX) ? zeta(i,j) : 0.0;
                     r = g = b = pow(fabs(z/12.6),.4) * 255;
                 } else if (outmode == 1) {
-                    double p = (i < Simulation::iMAX && j < Simulation::jMAX) ? psi[i][j] : 0.0;
+                    double p = (i < Simulation::iMAX && j < Simulation::jMAX) ? psi(i,j) : 0.0;
                     r = g = b = (p + 3.0) / 7.5 * 255;
                 } else if (outmode == 2) {
-                    r = g = b = (sim.get_p()[i][j]-pmin) / (pmax-pmin) * 255;
+                    r = g = b = (sim.get_p()(i,j)-pmin) / (pmax-pmin) * 255;
                 }
             }
             fprintf(fout, "%c%c%c", r, g, b);

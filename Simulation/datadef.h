@@ -26,7 +26,7 @@ constexpr inline unsigned int operator &(LT lval, RT rval) {
 /* Macros for poisson(), denoting whether there is an obstacle cell
  * adjacent to some direction
  */
-#define eps_E ((flag[i+1][j] & C_F)?1:0)
-#define eps_W ((flag[i-1][j] & C_F)?1:0)
-#define eps_N ((flag[i][j+1] & C_F)?1:0)
-#define eps_S ((flag[i][j-1] & C_F)?1:0)
+#define eps_E ((flag(i+1,j) & C_F)?1:0)
+#define eps_W ((flag(i-1,j) & C_F)?1:0)
+#define eps_N ((flag(i,j+1) & C_F)?1:0)
+#define eps_S ((flag(i,j-1) & C_F)?1:0)

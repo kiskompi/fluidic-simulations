@@ -4,9 +4,18 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "taskName": "Build",
+            "taskName": "Build Release",
             "type": "shell",
-            "command": "g++ -Ikokkos/core/ -Ikokkos/core/src -std=c++11 main.cpp Simulation/simulation.c -o runnable -Larray -O3 -Ofast",
+            "command": "sh build.sh",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "taskName": "Build Debug",
+            "type": "shell",
+            "command": "sh build_dbg.sh",
             "group": {
                 "kind": "build",
                 "isDefault": true

@@ -60,28 +60,3 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-// Used for comparing computations when debugging other implementations
-
-unsigned int simplest_checksum_char(Simulation::CharMatrix& in) {
-  unsigned int checksum = 0;
-  int i;
-  int j;
-  for (i=0; i<(Simulation::iMAX+2); i++){
-    for (j=0; j<(Simulation::jMAX+2); j++){
-      checksum+=in[i][j]*(i);
-    }
-  }
-  return checksum;
-}
-
-double simplest_checksum(Simulation::DoubleMatrix& in) {
-  double checksum = 0.0;
-  int i;
-  int j;
-  for (i=0; i<(Simulation::iMAX+2); i++){
-    for (j=0; j<(Simulation::jMAX+2); j++){
-      checksum+=in[i][j]*((double)(i*Simulation::jMAX)+j);
-    }
-  }
-  return checksum;
-}
