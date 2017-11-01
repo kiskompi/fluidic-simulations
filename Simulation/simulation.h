@@ -18,8 +18,8 @@ public:
     constexpr static const int    iMAX       = 660;     /* Number of cells horizontally */
     constexpr static const int    jMAX       = 120;     /* Number of cells vertically   */
 
-    typedef Matrix<double>  DoubleMatrix;
-    typedef Matrix<char>    CharMatrix;
+    typedef Kokkos::View<double**, Cuda>  DoubleMatrix;
+    typedef Kokkos::View<char**  , Cuda>  CharMatrix;
 
     const double        xlength    = 22.0;    /* Width of simulated domain    */
     const double        ylength    = 4.1;     /* Height of simulated domain   */
@@ -53,7 +53,6 @@ private:
     DoubleMatrix g    = DoubleMatrix();
     CharMatrix   flag = CharMatrix();
 
-    void init_flag();       // Initialize the flag array
     bool is_surrounded(const size_t i, const size_t j) const{
         return (flag[i-1][j-1] & C_F) &&
         (flag[i-1][ j ] & C_F) &&
@@ -74,7 +73,8 @@ public:
     void apply_boundary_conditions();
     int  poisson();
     void calc_psi_zeta(DoubleMatrix& zeta) const;
-    
+    void init_flag();       // Initialize the flag array
+
     inline const CharMatrix& get_flag() const {
         return flag;
     }

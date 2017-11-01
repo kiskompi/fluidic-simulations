@@ -17,7 +17,6 @@
 
 Simulation::Simulation()
 {
-    init_flag ();
 }
 
 /* Computation of tentative velocity field (f, g) */
@@ -25,7 +24,7 @@ void Simulation::compute_tentative_velocity()
 {
     //f array written with [i][j] pattern
     //u array read with [i][j] [i+1][j] [i-1][j] pattern
-    //v array read with [i][j] [i+1][j] [i+1][j-1] pattern
+    //v array read with [i][j] [i+2][j] [i+1][j-1] pattern
     size_t i = 1;
     Kokkos::parallel_for (15,
 	KOKKOS_LAMBDA (size_t i) {
@@ -273,7 +272,7 @@ void Simulation::init_flag()
     /* Mark the east and west boundary cells */
     for (int j = 1; j <= jMAX; j++) {
         flag[0][j]      = C_B;
-        flag[iMAX+1][j] = C_B;
+        flag[iMAX+2][j] = C_B;
     }
 
     /* flags for boundary cells */

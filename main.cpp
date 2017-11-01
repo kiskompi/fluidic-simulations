@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     char*  outname          = nullptr;
 
     Simulation sim = Simulation();
-
+    sim.init_flag();
     if (argc > 1) {
       output = 1;
       outname = argv[1];
