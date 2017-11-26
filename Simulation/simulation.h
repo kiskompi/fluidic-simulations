@@ -10,7 +10,6 @@
 #include <sys/stat.h>
 
 #include <Kokkos_Core.hpp>
-#include "../Matrix/Matrix.hpp"
 #include "datadef.h"
 
 class Simulation {
@@ -18,8 +17,8 @@ public:
     constexpr static const int    iMAX       = 660;     /* Number of cells horizontally */
     constexpr static const int    jMAX       = 120;     /* Number of cells vertically   */
 
-    typedef Kokkos::View<double**, Kokkos::OpenMP>  DoubleMatrix;
-    typedef Kokkos::View<char**  , Kokkos::OpenMP>  CharMatrix;
+    typedef Kokkos::View<double**>  DoubleMatrix;
+    typedef Kokkos::View<char**  >  CharMatrix;
 
     const double        xlength    = 22.0;    /* Width of simulated domain    */
     const double        ylength    = 4.1;     /* Height of simulated domain   */
@@ -41,17 +40,17 @@ public:
     const double        ifluid     = (iMAX * jMAX) - ibound;
     
 private:    
-    double res        = 0;
+    double res        = 0.0;
     int    ibound     = 0;
     double step_delta = 0.003;   /* Duration of each timestep */
-    
-    DoubleMatrix u    = DoubleMatrix(); 
-    DoubleMatrix v    = DoubleMatrix();
-    DoubleMatrix p    = DoubleMatrix();
-    DoubleMatrix rhs  = DoubleMatrix(); 
-    DoubleMatrix f    = DoubleMatrix();
-    DoubleMatrix g    = DoubleMatrix();
-    CharMatrix   flag = CharMatrix();
+ 
+    DoubleMatrix u    = DoubleMatrix  ("u",    iMAX+2, jMAX+2); 
+    DoubleMatrix v    = DoubleMatrix  ("v",    iMAX+2, jMAX+2);
+    DoubleMatrix p    = DoubleMatrix  ("p",    iMAX+2, jMAX+2);
+    DoubleMatrix rhs  = DoubleMatrix  ("rhs",  iMAX+2, jMAX+2); 
+    DoubleMatrix f    = DoubleMatrix  ("f",    iMAX+2, jMAX+2);
+    DoubleMatrix g    = DoubleMatrix  ("g",    iMAX+2, jMAX+2);
+    CharMatrix   flag = CharMatrix    ("flag", iMAX+2, jMAX+2);
 
     bool is_surrounded(const size_t i, const size_t j) const{
         return (flag(i-1,j-1) & C_F) &&
@@ -72,14 +71,14 @@ public:
     void set_timestep_interval();
     void apply_boundary_conditions();
     int  poisson();
-    void calc_psi_zeta(DoubleMatrix& zeta) const;
+    void calc_psi_zeta(DoubleMatrix zeta) const;
     void init_flag();       // Initialize the flag array
 
-    inline const CharMatrix& get_flag() const {
+    inline const CharMatrix get_flag() const {
         return flag;
     }
     
-    inline const DoubleMatrix& get_p() const {
+    inline const DoubleMatrix get_p() const {
         return p;
     }
 
@@ -100,8 +99,8 @@ public:
         char*         outname, 
         int           iters, 
         int           freq);
-    friend unsigned int simplest_checksum_char(Simulation::CharMatrix& in);
-    friend double simplest_checksum(Simulation::DoubleMatrix& in);
+    friend unsigned int simplest_checksum_char(Simulation::CharMatrix in);
+    friend double simplest_checksum(Simulation::DoubleMatrix in);
 };
 
 
