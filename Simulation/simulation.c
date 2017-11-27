@@ -124,8 +124,8 @@ int Simulation::poisson()
     Kokkos::parallel_reduce (
         iMAX*jMAX,
 	KOKKOS_LAMBDA(size_t idx, double& inner_p0) {
-        const int i = idx/iMAX;
-        const int j = idx%iMAX;
+        const int i = idx/iMAX + 1;
+        const int j = idx%iMAX + 1;
             if (flag(i,j) & C_F) {
                 inner_p0 += p(i,j)*p(i,j);
             }
@@ -271,8 +271,8 @@ void Simulation::init_flag()
     Kokkos::parallel_for (
         iMAX*jMAX,
         KOKKOS_LAMBDA(size_t idx) {
-            const int i = idx/iMAX;
-            const int j = idx%iMAX;
+            const int i = idx/iMAX + 1;
+            const int j = idx%iMAX + 1;
             const int x = (i + 0.5) * delx - mx;
             const int y = (j - 0.5) * dely - my;
             flag(i + 1,j) = (x * x + y * y <= rad1 * rad1) ? C_B : C_F;
@@ -332,9 +332,11 @@ void Simulation::apply_boundary_conditions()
     * internal obstacle cells. This forces the u and v velocity to
     * tend towards zero in these cells.
     */
-
-    for (int i = 1; i <= iMAX; i++) {
-        for (int j = 1; j <= jMAX; j++) {
+    Kokkos::parallel_for (
+        iMAX*jMAX,                     
+        KOKKOS_LAMBDA(size_t idx) {
+        const int i = idx/iMAX + 1;
+        const int j = idx%iMAX + 1;    
             if (flag(i,j) & Cell::B_NSEW) {
                 switch (flag(i,j)) {
                 case Cell::B_N:
@@ -360,98 +362,104 @@ void Simulation::apply_boundary_conditions()
                     break;
                 }
             }
-        }
-    }
-    for (int i=0; i<=(iMAX-1); i++) {
-        for (int j=1; j<=jMAX; j++) {
-            if (flag(i+1,j) & Cell::B_NSEW) {
-                switch (flag(i+1,j)) {
-                case Cell::B_N:
-                    u(i,j) = -u(i,j+1);
-                    break;
-                case Cell::B_W:
-                    u(i,j) = 0.0;
-                    break;
-                case Cell::B_NE:
-                    u(i,j) = -u(i,j+1);
-                    break;
-                case Cell::B_SW:
-                    u(i,j) = 0.0;
-                    break;
-                case Cell::B_NW:
-                    u(i,j) = 0.0;
-                    break;
-                case Cell::B_S:
-                    u(i,j) = -u(i,j-1);
-                    break;
-                case Cell::B_SE:
-                    u(i,j) = -u(i,j-1);
-                    break;
-                }
+    });
+    Kokkos::parallel_for (
+        iMAX*jMAX,                     
+        KOKKOS_LAMBDA(size_t idx) {
+        const int i = idx/iMAX + 1;
+        const int j = idx%iMAX + 1;         
+        if (flag(i+1,j) & Cell::B_NSEW) {
+            switch (flag(i+1,j)) {
+            case Cell::B_N:
+                u(i,j) = -u(i,j+1);
+                break;
+            case Cell::B_W:
+                u(i,j) = 0.0;
+                break;
+            case Cell::B_NE:
+                u(i,j) = -u(i,j+1);
+                break;
+            case Cell::B_SW:
+                u(i,j) = 0.0;
+                break;
+            case Cell::B_NW:
+                u(i,j) = 0.0;
+                break;
+            case Cell::B_S:
+                u(i,j) = -u(i,j-1);
+                break;
+            case Cell::B_SE:
+                u(i,j) = -u(i,j-1);
+                break;
             }
         }
-    }
+    });
 
+    Kokkos::parallel_for (
+        iMAX*jMAX,                     
+        KOKKOS_LAMBDA(size_t idx) {
+        const int i = idx/iMAX + 1;
+        const int j = idx%iMAX + 1;         
 
-    for (int i=1; i<=iMAX; i++) {
-        for (int j=1; j<=jMAX; j++) {
-            if (flag(i,j) & Cell::B_NSEW) {
-                switch (flag(i,j)) {
-                case Cell::B_N:
-                    v(i,j)   = 0.0;
-                    break;
-                case Cell::B_E:
-                    v(i,j)   = -v(i+1,j);
-                    break;
-                case Cell::B_NE:
-                    v(i,j)   = 0.0;
-                    break;
-                case Cell::B_SE:
-                    v(i,j)   = -v(i+1,j);
-                    break;
-                case Cell::B_NW:
-                    v(i,j)   = 0.0;
-                    break;
-                case Cell::B_W:
-                    v(i,j)   = -v(i-1,j);
-                    break;
-                case Cell::B_SW:
-                    v(i,j)   = -v(i-1,j);
-                    break;
-                }
+        if (flag(i,j) & Cell::B_NSEW) {
+            switch (flag(i,j)) {
+            case Cell::B_N:
+                v(i,j)   = 0.0;
+                break;
+            case Cell::B_E:
+                v(i,j)   = -v(i+1,j);
+                break;
+            case Cell::B_NE:
+                v(i,j)   = 0.0;
+                break;
+            case Cell::B_SE:
+                v(i,j)   = -v(i+1,j);
+                break;
+            case Cell::B_NW:
+                v(i,j)   = 0.0;
+                break;
+            case Cell::B_W:
+                v(i,j)   = -v(i-1,j);
+                break;
+            case Cell::B_SW:
+                v(i,j)   = -v(i-1,j);
+                break;
             }
         }
-    }
+    });
 
-    for (int i=1; i<=iMAX; i++) {
-        for (int j=0; j<=(jMAX-1); j++) {
-            if (flag(i,j+1) & Cell::B_NSEW) {
-                switch (flag(i,j+1)) {
-                case Cell::B_E:
-                    v(i,j) = -v(i+1,j);
-                    break;
-                case Cell::B_S:
-                    v(i,j) = 0.0;
-                    break;
-                case Cell::B_NE:
-                    v(i,j) = -v(i+1,j);
-                    break;
-                case Cell::B_SE:
-                    v(i,j) = 0.0;
-                    break;
-                case Cell::B_SW:
-                    v(i,j) = 0.0;
-                    break;
-                case Cell::B_W:
-                    v(i,j) = -v(i-1,j);
-                    break;
-                case Cell::B_NW:
-                    v(i,j) = -v(i-1,j);
-                    break;
-                }
+     Kokkos::parallel_for (
+        iMAX*jMAX,                     
+        KOKKOS_LAMBDA(size_t idx) {
+        const int i = idx/iMAX + 1;
+        const int j = idx%iMAX + 1;         
+
+        if (flag(i,j+1) & Cell::B_NSEW) {
+            switch (flag(i,j+1)) {
+            case Cell::B_E:
+                v(i,j) = -v(i+1,j);
+                break;
+            case Cell::B_S:
+                v(i,j) = 0.0;
+                break;
+            case Cell::B_NE:
+                v(i,j) = -v(i+1,j);
+                break;
+            case Cell::B_SE:
+                v(i,j) = 0.0;
+                break;
+            case Cell::B_SW:
+                v(i,j) = 0.0;
+                break;
+            case Cell::B_W:
+                v(i,j) = -v(i-1,j);
+                break;
+            case Cell::B_NW:
+                v(i,j) = -v(i-1,j);
+                break;
             }
         }
-    }
+    });
 
     /* Finally, fix the horizontal velocity at the  western edge to have
     * a continual flow of fluid into the simulation.
@@ -469,16 +477,18 @@ void  Simulation::calc_psi_zeta(DoubleMatrix zeta) const
 {
     /* Computation of the vorticity zeta at the upper right corner     */
     /* of cell (i,j) (only if the corner is surrounded by fluid cells) */
-    for (size_t i=1; i<=iMAX-1; i++) {
-        for (size_t j=1; j<=jMAX-1; j++) {
-            if (is_surrounded(i, j)) {
-                zeta(i,j) = (u(i,j+1)-u(i,j))/dely-
-                             (v(i+1,j)-v(i,j))/delx;
-            } else {
-                zeta(i,j) = 0.0;
-            }
+     Kokkos::parallel_for (
+        iMAX*jMAX,                     
+        KOKKOS_LAMBDA(size_t idx) {
+        const int i = idx/iMAX + 1;
+        const int j = idx%iMAX + 1;         
+        if (is_surrounded(i, j)) {
+            zeta(i,j) = (u(i,j+1)-u(i,j))/dely-
+                         (v(i+1,j)-v(i,j))/delx;
+        } else {
+            zeta(i,j) = 0.0;
         }
-    }
+    });
 }
 
 // ====================== FRIEND FUNCTIONS ====================== //

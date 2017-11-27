@@ -21,7 +21,7 @@ public:
     typedef Kokkos::View<char**  >  CharMatrix;
 
     const double        xlength    = 22.0;    /* Width of simulated domain    */
-    const double        ylength    = 4.1;     /* Height of simulated domain   */
+    const double        ylength    = 41.0;     /* Height of simulated domain   */
 
     const double        time_end   = 40;      /* Simulation runtime 2.1             */
     const double        tau        = 0.5;     /* Safety factor for timestep control */
