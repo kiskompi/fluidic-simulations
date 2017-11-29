@@ -1,0 +1,1 @@
+g++ -L/home/akomporday/git-project/lib/ -std=c++11 -fopenmp  -O3 -I/home/akomporday/git-project/include  -L/home/akomporday/git-project -fopenmp   main.o simulation.o -lkokkos -ldl  -o git-project.host

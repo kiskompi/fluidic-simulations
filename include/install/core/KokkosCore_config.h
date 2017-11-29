@@ -1,6 +1,6 @@
 /* ---------------------------------------------
 Makefile constructed configuration:
-Sun Nov 26 19:35:57 CET 2017
+Wed Nov 29 09:20:15 CET 2017
 ----------------------------------------------*/
 #if !defined(KOKKOS_MACROS_HPP) || defined(KOKKOS_CORE_CONFIG_H)
 #error "Do not include KokkosCore_config.h directly; include Kokkos_Macros.hpp instead."
@@ -8,7 +8,7 @@ Sun Nov 26 19:35:57 CET 2017
 #define KOKKOS_CORE_CONFIG_H
 #endif
 /* Execution Spaces */
-#define KOKKOS_HAVE_PTHREAD 1
+#define KOKKOS_HAVE_OPENMP 1
 /* General Settings */
 #define KOKKOS_HAVE_CXX11 1
 #define KOKKOS_ENABLE_PROFILING

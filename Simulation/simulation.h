@@ -19,9 +19,10 @@ public:
 
     typedef Kokkos::View<double**>  DoubleMatrix;
     typedef Kokkos::View<char**  >  CharMatrix;
+    typedef CharMatrix::HostMirror host_view_type;
 
     const double        xlength    = 22.0;    /* Width of simulated domain    */
-    const double        ylength    = 41.0;     /* Height of simulated domain   */
+    const double        ylength    = 4.10;     /* Height of simulated domain   */
 
     const double        time_end   = 40;      /* Simulation runtime 2.1             */
     const double        tau        = 0.5;     /* Safety factor for timestep control */
@@ -37,7 +38,7 @@ public:
     
     const double        delx       = xlength/iMAX;
     const double        dely       = ylength/jMAX;
-    const double        ifluid     = (iMAX * jMAX) - ibound;
+    double              ifluid     = 0.0;
     
 private:    
     double res        = 0.0;

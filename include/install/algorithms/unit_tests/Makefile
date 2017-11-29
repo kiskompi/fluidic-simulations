@@ -1,10 +1,10 @@
-KOKKOS_SETTINGS=KOKKOS_SRC_PATH=/home/akomporday/kokkos GTEST_PATH=/home/akomporday/kokkos/tpls/gtest KOKKOS_PATH=/home/akomporday/kokkos
+KOKKOS_SETTINGS=KOKKOS_SRC_PATH=/home/akomporday/git-project/include KOKKOS_DEVICES=OpenMP GTEST_PATH=/home/akomporday/git-project/include/tpls/gtest KOKKOS_PATH=/home/akomporday/git-project/include
 
 all:
-	$(MAKE) -f /home/akomporday/kokkos/algorithms/unit_tests/Makefile KOKKOS_SRC_PATH=/home/akomporday/kokkos GTEST_PATH=/home/akomporday/kokkos/tpls/gtest KOKKOS_PATH=/home/akomporday/kokkos
+	$(MAKE) -f /home/akomporday/git-project/include/algorithms/unit_tests/Makefile KOKKOS_SRC_PATH=/home/akomporday/git-project/include KOKKOS_DEVICES=OpenMP GTEST_PATH=/home/akomporday/git-project/include/tpls/gtest KOKKOS_PATH=/home/akomporday/git-project/include
 
 test: all
-	$(MAKE) -f /home/akomporday/kokkos/algorithms/unit_tests/Makefile KOKKOS_SRC_PATH=/home/akomporday/kokkos GTEST_PATH=/home/akomporday/kokkos/tpls/gtest KOKKOS_PATH=/home/akomporday/kokkos test
+	$(MAKE) -f /home/akomporday/git-project/include/algorithms/unit_tests/Makefile KOKKOS_SRC_PATH=/home/akomporday/git-project/include KOKKOS_DEVICES=OpenMP GTEST_PATH=/home/akomporday/git-project/include/tpls/gtest KOKKOS_PATH=/home/akomporday/git-project/include test
 
 clean:
-	$(MAKE) -f /home/akomporday/kokkos/algorithms/unit_tests/Makefile KOKKOS_SRC_PATH=/home/akomporday/kokkos GTEST_PATH=/home/akomporday/kokkos/tpls/gtest KOKKOS_PATH=/home/akomporday/kokkos clean
+	$(MAKE) -f /home/akomporday/git-project/include/algorithms/unit_tests/Makefile KOKKOS_SRC_PATH=/home/akomporday/git-project/include KOKKOS_DEVICES=OpenMP GTEST_PATH=/home/akomporday/git-project/include/tpls/gtest KOKKOS_PATH=/home/akomporday/git-project/include clean

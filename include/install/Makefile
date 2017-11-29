@@ -1,20 +1,20 @@
-KOKKOS_SETTINGS=KOKKOS_SRC_PATH=/home/akomporday/kokkos GTEST_PATH=/home/akomporday/kokkos/tpls/gtest KOKKOS_PATH=/home/akomporday/kokkos
+KOKKOS_SETTINGS=KOKKOS_SRC_PATH=/home/akomporday/git-project/include KOKKOS_DEVICES=OpenMP GTEST_PATH=/home/akomporday/git-project/include/tpls/gtest KOKKOS_PATH=/home/akomporday/git-project/include
 
 kokkoslib:
 	cd core; \
-	$(MAKE) -f /home/akomporday/kokkos/core/src/Makefile KOKKOS_SRC_PATH=/home/akomporday/kokkos GTEST_PATH=/home/akomporday/kokkos/tpls/gtest KOKKOS_PATH=/home/akomporday/kokkos PREFIX=/home/akomporday/kokkos/install/install build-lib
+	$(MAKE) -f /home/akomporday/git-project/include/core/src/Makefile KOKKOS_SRC_PATH=/home/akomporday/git-project/include KOKKOS_DEVICES=OpenMP GTEST_PATH=/home/akomporday/git-project/include/tpls/gtest KOKKOS_PATH=/home/akomporday/git-project/include PREFIX=/home/akomporday/git-project/ build-lib
 
 install: kokkoslib
 	cd core; \
-	$(MAKE) -f /home/akomporday/kokkos/core/src/Makefile KOKKOS_SRC_PATH=/home/akomporday/kokkos GTEST_PATH=/home/akomporday/kokkos/tpls/gtest KOKKOS_PATH=/home/akomporday/kokkos PREFIX=/home/akomporday/kokkos/install/install install
+	$(MAKE) -f /home/akomporday/git-project/include/core/src/Makefile KOKKOS_SRC_PATH=/home/akomporday/git-project/include KOKKOS_DEVICES=OpenMP GTEST_PATH=/home/akomporday/git-project/include/tpls/gtest KOKKOS_PATH=/home/akomporday/git-project/include PREFIX=/home/akomporday/git-project/ install
 
 kokkoslib-test:
 	cd core; \
-	$(MAKE) -f /home/akomporday/kokkos/core/src/Makefile KOKKOS_SRC_PATH=/home/akomporday/kokkos GTEST_PATH=/home/akomporday/kokkos/tpls/gtest KOKKOS_PATH=/home/akomporday/kokkos PREFIX=/home/akomporday/kokkos/install/install build-lib
+	$(MAKE) -f /home/akomporday/git-project/include/core/src/Makefile KOKKOS_SRC_PATH=/home/akomporday/git-project/include KOKKOS_DEVICES=OpenMP GTEST_PATH=/home/akomporday/git-project/include/tpls/gtest KOKKOS_PATH=/home/akomporday/git-project/include PREFIX=/home/akomporday/git-project/include/install/install build-lib
 
 install-test: kokkoslib-test
 	cd core; \
-	$(MAKE) -f /home/akomporday/kokkos/core/src/Makefile KOKKOS_SRC_PATH=/home/akomporday/kokkos GTEST_PATH=/home/akomporday/kokkos/tpls/gtest KOKKOS_PATH=/home/akomporday/kokkos PREFIX=/home/akomporday/kokkos/install/install install
+	$(MAKE) -f /home/akomporday/git-project/include/core/src/Makefile KOKKOS_SRC_PATH=/home/akomporday/git-project/include KOKKOS_DEVICES=OpenMP GTEST_PATH=/home/akomporday/git-project/include/tpls/gtest KOKKOS_PATH=/home/akomporday/git-project/include PREFIX=/home/akomporday/git-project/include/install/install install
 
 build-test: install-test
 	$(MAKE) -C core/unit_test
@@ -54,4 +54,4 @@ clean:
 	$(MAKE) -C example/fenl clean
 	$(MAKE) -C example/tutorial clean
 	cd core; \
-	$(MAKE) -f /home/akomporday/kokkos/core/src/Makefile KOKKOS_SRC_PATH=/home/akomporday/kokkos GTEST_PATH=/home/akomporday/kokkos/tpls/gtest KOKKOS_PATH=/home/akomporday/kokkos clean
+	$(MAKE) -f /home/akomporday/git-project/include/core/src/Makefile KOKKOS_SRC_PATH=/home/akomporday/git-project/include KOKKOS_DEVICES=OpenMP GTEST_PATH=/home/akomporday/git-project/include/tpls/gtest KOKKOS_PATH=/home/akomporday/git-project/include clean

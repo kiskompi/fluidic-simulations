@@ -34,7 +34,7 @@ cpp_files=""
 xcompiler_args=""
 
 # Cuda (NVCC) only arguments
-cuda_args=""
+cuda_args="--expt-extended-lambda"
 
 # Arguments for both NVCC and Host compiler
 shared_args=""

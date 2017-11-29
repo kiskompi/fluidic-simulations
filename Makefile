@@ -1,4 +1,5 @@
 KOKKOS_PATH :=/home/akomporday/git-project/include
+KOKKOS_DEVICES := "OpenMP"
 
 MAKEFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 SRC_DIR := $(dir $(MAKEFILE_PATH))
@@ -20,8 +21,8 @@ else
   EXE = $(addsuffix .host, $(shell basename $(SRC_DIR)))
 endif
 
-CXXFLAGS = -O3 -I$(SRC_DIR) 
-LINK ?= $(CXX) -L/home/akomporday/git-project/lib/
+CXXFLAGS = -std=c++11 -fopenmp  -g  -O0 -I$(SRC_DIR)include 
+LINK ?= $(CXX) -L/home/akomporday/git-project/lib/ $(CXXFLAGS)
 LDFLAGS ?=
 
 include $(KOKKOS_PATH)/Makefile.kokkos
@@ -34,6 +35,7 @@ LIB =
 build: $(EXE)
 
 $(EXE): $(OBJ) $(KOKKOS_LINK_DEPENDS)
+	echo $(SRC)
 	$(LINK) $(KOKKOS_LDFLAGS) $(LINKFLAGS) $(EXTRA_PATH) $(OBJ) $(KOKKOS_LIBS) $(LIB) -o $(EXE)
 
 clean: 
@@ -42,5 +44,7 @@ clean:
 # Compilation rules
 
 %.o:$(SRC_DIR)/%.cpp $(KOKKOS_DEPENDS) 
+	$(CXX) $(KOKKOS_CPPFLAGS) $(KOKKOS_CXXFLAGS) $(CXXFLAGS) $(EXTRA_INC) -c $<
+%.o:$(SRC_DIR)Simulation/%.cpp $(KOKKOS_DEPENDS) 
 	$(CXX) $(KOKKOS_CPPFLAGS) $(KOKKOS_CXXFLAGS) $(CXXFLAGS) $(EXTRA_INC) -c $<
 
