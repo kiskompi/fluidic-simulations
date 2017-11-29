@@ -311,7 +311,6 @@ void Simulation::init_flag()
     for (int i = 1; i <= iMAX; ++i) {
         for (int j = 1; j <= jMAX; ++j) {
             if (!(h_flag(i,j) & C_F)) {
-                int a = [=]()->int{return flag(i,j);}();
                 ++ibound;
                 if (h_flag(i-1,j) & C_F) h_flag(i,j) = h_flag(i,j) | B_W;
                 if (h_flag(i+1,j) & C_F) h_flag(i,j) = h_flag(j,j) | B_E;

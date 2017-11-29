@@ -7,7 +7,7 @@ default: build
 
 ifneq (,$(findstring Cuda,$(KOKKOS_DEVICES)))
 CXX = ${KOKKOS_PATH}/bin/nvcc_wrapper
-CXXFLAGS = -O3
+CXXFLAGS = -O0 -g
 LINK = ${CXX}
 LINKFLAGS = 
 EXE = navier.cuda
