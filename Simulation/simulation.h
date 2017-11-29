@@ -12,10 +12,13 @@
 #include <Kokkos_Core.hpp>
 #include "datadef.h"
 
+#define iMAX 660
+#define jMAX 120
+
 class Simulation {
 public:
-    constexpr static const int    iMAX       = 660;     /* Number of cells horizontally */
-    constexpr static const int    jMAX       = 120;     /* Number of cells vertically   */
+//    constexpr static const int    iMAX       = 660;     /* Number of cells horizontally */
+//    constexpr static const int    jMAX       = 120;     /* Number of cells vertically   */
 
     typedef Kokkos::View<double**>  DoubleMatrix;
     typedef Kokkos::View<char**  >  CharMatrix;

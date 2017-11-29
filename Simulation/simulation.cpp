@@ -542,11 +542,11 @@ void write_ppm(const Simulation& sim,
 
     sim.calc_psi_zeta(zeta);
 
-    fprintf(fout, "P6 %d %d 255\n", Simulation::iMAX, Simulation::jMAX);
+    fprintf(fout, "P6 %d %d 255\n", iMAX, jMAX);
 
 
-    for (size_t j = 1; j < Simulation::jMAX+1 ; j++) {
-        for (size_t i = 1; i < Simulation::iMAX+1 ; i++) {
+    for (size_t j = 1; j < jMAX+1 ; j++) {
+        for (size_t i = 1; i < iMAX+1 ; i++) {
             int r = 0, g = 0, b = 0;
             if (!(sim.get_flag()(i,j) & C_F)) {
                 r = 0;
@@ -554,10 +554,10 @@ void write_ppm(const Simulation& sim,
                 g = 255;
             } else {
                 if (outmode == 0) {
-                    double z = (i < Simulation::iMAX && j < Simulation::jMAX) ? zeta(i,j) : 0.0;
+                    double z = (i < iMAX && j < jMAX) ? zeta(i,j) : 0.0;
                     r = g = b = pow(fabs(z/12.6),.4) * 255;
                 } else if (outmode == 1) {
-                    double p = (i < Simulation::iMAX && j < Simulation::jMAX) ? psi(i,j) : 0.0;
+                    double p = (i < iMAX && j < jMAX) ? psi(i,j) : 0.0;
                     r = g = b = (p + 3.0) / 7.5 * 255;
                 } else if (outmode == 2) {
                     r = g = b = (sim.get_p()(i,j)-pmin) / (pmax-pmin) * 255;
