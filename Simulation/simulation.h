@@ -17,9 +17,10 @@ public:
     constexpr static const int    iMAX       = 660;     /* Number of cells horizontally */
     constexpr static const int    jMAX       = 120;     /* Number of cells vertically   */
 
-    typedef Kokkos::View<double**>  DoubleMatrix;
-    typedef Kokkos::View<char**  >  CharMatrix;
-    typedef CharMatrix::HostMirror host_view_type;
+    typedef Kokkos::View<double**>    DoubleMatrix;
+    typedef Kokkos::View<char**  >    CharMatrix;
+    typedef CharMatrix::HostMirror    char_host_view;
+    typedef DoubleMatrix::HostMirror  double_host_view;
 
     const double        xlength    = 22.0;    /* Width of simulated domain    */
     const double        ylength    = 4.10;     /* Height of simulated domain   */
@@ -48,9 +49,9 @@ private:
     DoubleMatrix u    = DoubleMatrix  ("u",    iMAX+2, jMAX+2); 
     DoubleMatrix v    = DoubleMatrix  ("v",    iMAX+2, jMAX+2);
     DoubleMatrix p    = DoubleMatrix  ("p",    iMAX+2, jMAX+2);
-    DoubleMatrix rhs  = DoubleMatrix  ("rhs",  iMAX+2, jMAX+2); 
     DoubleMatrix f    = DoubleMatrix  ("f",    iMAX+2, jMAX+2);
     DoubleMatrix g    = DoubleMatrix  ("g",    iMAX+2, jMAX+2);
+    DoubleMatrix rhs  = DoubleMatrix  ("rhs",  iMAX+2, jMAX+2); 
     CharMatrix   flag = CharMatrix    ("flag", iMAX+2, jMAX+2);
 
     bool is_surrounded(const size_t i, const size_t j) const{

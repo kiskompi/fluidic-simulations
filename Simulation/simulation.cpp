@@ -171,17 +171,18 @@ int Simulation::poisson()
         /* Partial computation of residual */
         double resl = 0.0;
         Kokkos::parallel_reduce (
-            iMAX,
-            KOKKOS_LAMBDA(size_t i, double& resl_lmb) {
-            for (int j = 1; j <= jMAX; j++) {
-                if (flag(i,j) & C_F) {
-                    /* only fluid cells */
-                    double add = (eps_E*(p(i+1,j)-p(i,j)) -
-                                  eps_W*(p(i,j)-p(i-1,j))) * rdx2  +
-                                 (eps_N*(p(i,j+1)-p(i,j)) -
-                                  eps_S*(p(i,j)-p(i,j-1))) * rdy2  -  rhs(i,j);
-                    resl_lmb += add*add;
-                }
+            iMAX*jMAX,
+            KOKKOS_LAMBDA(size_t idx, double& resl_lmb) {
+            const int i = idx/iMAX+1;
+            const int j = idx%iMAX+1;
+
+            if (flag(i,j) & C_F) {
+                /* only fluid cells */
+                double add = (eps_E*(p(i+1,j)-p(i,j)) -
+                              eps_W*(p(i,j)-p(i-1,j))) * rdx2  +
+                             (eps_N*(p(i,j+1)-p(i,j)) -
+                              eps_S*(p(i,j)-p(i,j-1))) * rdy2  -  rhs(i,j);
+                resl_lmb += add*add;
             }
         }, resl);
         resl = sqrt((resl)/ifluid)/p0;
@@ -197,29 +198,24 @@ int Simulation::poisson()
 /* Update the velocity values based on the tentative
  * velocity values and the new pressure matrix
  */
+
 void Simulation::update_velocity()
 {
-    Kokkos::parallel_for (
-        iMAX,
-	KOKKOS_LAMBDA(size_t i) {
-        for (int j=1; j<=jMAX; j++) {
-            /* only if both adjacent cells are fluid cells */
-            if ((flag(i,j) & C_F) && (flag(i+1,j) & C_F)) {
-                u(i,j) = f(i,j)-(p(i+1,j)-p(i,j))*step_delta/delx;
-            }
+    double_host_view h_u = Kokkos::create_mirror_view (u);
+    double_host_view h_f = Kokkos::create_mirror_view (f);
+    double_host_view h_v = Kokkos::create_mirror_view (v);
+    double_host_view h_g = Kokkos::create_mirror_view (g);
+    double_host_view h_p = Kokkos::create_mirror_view (p);
+    for (int i = 1; i <= iMAX; ++i) {
+        for (int j = 1; j <= jMAX; ++j) {
+            h_u(i,j) = f(i,j)-(p(i+1,j)-p(i,j))*step_delta/delx;
         }
-    });
-
-    Kokkos::parallel_for (
-        iMAX,
-	KOKKOS_LAMBDA(size_t i) {
-        for (int j=1; j<=jMAX-1; j++) {
-            /* only if both adjacent cells are fluid cells */
-            if ((flag(i,j) & C_F) && (flag(i,j+1) & C_F)) {
-                v(i,j) = g(i,j)-(p(i,j+1)-p(i,j))*step_delta/dely;
-            }
+    }
+    for (int i = 1; i <= iMAX; ++i) {
+        for (int j = 1; j <= jMAX; ++j) {
+            h_v(i,j) = g(i,j)-(p(i,j+1)-p(i,j))*step_delta/dely;
         }
-    });
+    }
 }
 
 
@@ -234,16 +230,23 @@ void Simulation::set_timestep_interval()
     if (tau >= 1.0e-10) { /* else no time stepsize control */
         double umax = 1.0e-10;
         double vmax = 1.0e-10;
-        for (int i=1; i<=iMAX+1; i++) {
-            for (int j=1; j<=jMAX+1; j++) {
-                umax= max(fabs(u(i,j)), umax);
-            }
-        }
-        for (int i=1; i<=iMAX+1; i++) {
-            for (int j=0; j<=jMAX+1; j++) {
-                vmax= max(fabs(v(i,j)), vmax);
-            }
-        }
+        Kokkos::parallel_reduce (
+            iMAX,
+            KOKKOS_LAMBDA(size_t idx, double& max_ph) {
+                const int i = idx/iMAX+1;
+                const int j = idx%iMAX+1;
+                /* only if both adjacent cells are fluid cells */
+                max_ph = max(fabs(u(i,j)), max_ph);
+        }, umax);
+
+        Kokkos::parallel_reduce (
+            iMAX,
+            KOKKOS_LAMBDA(size_t idx, double& max_ph) {
+                const int i = idx/iMAX+1;
+                const int j = idx%iMAX+1;
+                /* only if both adjacent cells are fluid cells */
+                max_ph = max(fabs(v(i,j)), max_ph);
+        }, vmax);
 
         const double deltu = delx/umax;
         const double deltv = dely/vmax;
@@ -270,7 +273,7 @@ void Simulation::init_flag()
     const double rad1 = 5.00/41.0 * jMAX * dely;
 
     printf("%g, %g, %g, %g, %g\n", delx, dely, mx, my, rad1);
-    host_view_type h_flag = Kokkos::create_mirror_view (flag);
+    char_host_view h_flag = Kokkos::create_mirror_view (flag);
     for (int i = 0; i <= iMAX + 1; ++i) {
         for (int j = 0; j <= jMAX + 1; ++j) {
            h_flag(i,j) = 0; 
@@ -286,8 +289,8 @@ void Simulation::init_flag()
 
     for (int i = 1; i <= iMAX; ++i) {
         for (int j = 1; j <= jMAX; ++j) {
-            const int x = (i - 0.5) * delx - mx;
-            const int y = (j - 0.5) * dely - my;
+            const double x = (i - 0.5) * delx - mx;
+            const double y = (j - 0.5) * dely - my;
             h_flag(i,j) = (x * x + y * y <= rad1 * rad1) ? C_B : C_F;
         }
     }
@@ -295,16 +298,19 @@ void Simulation::init_flag()
     printf("Checksum: %d\n", checksum);
 
     /* Mark the north & south boundary cells */
-    for (int i = 0; i <= iMAX + 1; ++i) {
+    for (int i = 0; i <= iMAX+1; ++i) {
         h_flag(i,0)      = C_B;
         h_flag(i,jMAX+1) = C_B;
+        printf("Marked: %d", C_B);
     }
     /* Mark the east and west boundary cells */
     for (int j = 1; j <= jMAX; ++j) {
         h_flag(0,j)      = C_B;
         h_flag(iMAX+1,j) = C_B;
+        printf("Marked: %d", C_B);
     }
 
+    Kokkos::deep_copy (flag, h_flag); // Copy from host to device.
     /* flags for boundary cells */
     // nem kell kokkosozni
     ibound = 0;
@@ -322,7 +328,6 @@ void Simulation::init_flag()
     }
     ifluid = (iMAX * jMAX) - ibound;
     printf("%d\n", ibound);
-    Kokkos::deep_copy (flag, h_flag); // Copy from host to device.
 }
 
 void Simulation::apply_boundary_conditions()
