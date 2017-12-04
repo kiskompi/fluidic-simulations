@@ -87,7 +87,7 @@ public:
         return p;
     }
 
-    inline const double& get_res() const {
+    inline double get_res() const {
         return res;
     }
     

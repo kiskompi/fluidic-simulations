@@ -14,6 +14,22 @@
 
 Simulation::Simulation()
 {
+    double_host_view h_p= Kokkos::create_mirror_view (p);
+    for (int i = 0; i <= iMAX + 1; ++i) {
+        for (int j = 0; j <= jMAX + 1; ++j) {
+           h_p(i,j) = 0.0; 
+        }
+    }
+    Kokkos::deep_copy (p, h_p); // Copy from host to device.
+    
+    double_host_view h_rhs= Kokkos::create_mirror_view (rhs);
+    for (int i = 0; i <= iMAX + 1; ++i) {
+        for (int j = 0; j <= jMAX + 1; ++j) {
+           h_rhs(i,j) = 0.0; 
+        }
+    }
+    Kokkos::deep_copy (rhs, h_rhs); // Copy from host to device.
+
 }
 
 /* Computation of tentative velocity field (f, g) */
@@ -127,6 +143,7 @@ int Simulation::poisson()
         const int i = idx/iMAX + 1;
         const int j = idx%iMAX + 1;
             if (flag(i,j) & C_F) {
+                printf("%f\n", p(i,j));
                 inner_p0 += p(i,j)*p(i,j);
             }
     }, p0);
@@ -151,7 +168,7 @@ int Simulation::poisson()
                     }
                     if (flag(i,j) == (C_F | B_NSEW)) {
                         /* five point star for interior fluid cells */
-                        p(i,j) = (1.-omega)*p(i,j) -
+                        p(i,j) = (1.0-omega)*p(i,j) -
                                   beta_2*(
                                       (p(i+1,j)+p(i-1,j))*rdx2
                                       + (p(i,j+1)+p(i,j-1))*rdy2
@@ -161,9 +178,9 @@ int Simulation::poisson()
                         double beta_mod = -omega/((eps_E+eps_W)*rdx2+(eps_N+eps_S)*rdy2);
                         p(i,j) = (1.-omega)*p(i,j) -
                                   beta_mod*(
-                                      (eps_E*p(i+1,j)+eps_W*p(i-1,j))*rdx2
+                                        (eps_E*p(i+1,j)+eps_W*p(i-1,j))*rdx2
                                       + (eps_N*p(i,j+1)+eps_S*p(i,j-1))*rdy2
-                                     - rhs(i,j));
+                                      - rhs(i,j));
                     }
             }); /* end of i */
         } /* end of rb */
@@ -178,14 +195,15 @@ int Simulation::poisson()
 
             if (flag(i,j) & C_F) {
                 /* only fluid cells */
-                double add = (eps_E*(p(i+1,j)-p(i,j)) -
-                              eps_W*(p(i,j)-p(i-1,j))) * rdx2  +
-                             (eps_N*(p(i,j+1)-p(i,j)) -
-                              eps_S*(p(i,j)-p(i,j-1))) * rdy2  -  rhs(i,j);
+                const  double add = (eps_E*(p(i+1,j)-p(i,j)) -
+                              eps_W*(p(i, j )-p(i-1,j))) * rdx2  +
+                             (eps_N*(p(i,j+1)-p( i ,j)) -
+                              eps_S*(p(i, j )-p(i,j-1))) * rdy2  -  rhs(i,j);
                 resl_lmb += add*add;
             }
         }, resl);
         resl = sqrt((resl)/ifluid)/p0;
+        printf("%f, %f, %f\n", resl, ifluid, p0);
         res = resl;
         /* convergence? */
         if (res<eps) break;
@@ -301,13 +319,11 @@ void Simulation::init_flag()
     for (int i = 0; i <= iMAX+1; ++i) {
         h_flag(i,0)      = C_B;
         h_flag(i,jMAX+1) = C_B;
-        printf("Marked: %d", C_B);
     }
     /* Mark the east and west boundary cells */
     for (int j = 1; j <= jMAX; ++j) {
         h_flag(0,j)      = C_B;
         h_flag(iMAX+1,j) = C_B;
-        printf("Marked: %d", C_B);
     }
 
     Kokkos::deep_copy (flag, h_flag); // Copy from host to device.
@@ -317,6 +333,7 @@ void Simulation::init_flag()
     for (int i = 1; i <= iMAX; ++i) {
         for (int j = 1; j <= jMAX; ++j) {
             if (!(h_flag(i,j) & C_F)) {
+                int a = [=]()->int{return flag(i,j);}();
                 ++ibound;
                 if (h_flag(i-1,j) & C_F) h_flag(i,j) = h_flag(i,j) | B_W;
                 if (h_flag(i+1,j) & C_F) h_flag(i,j) = h_flag(j,j) | B_E;
@@ -516,60 +533,3 @@ void  Simulation::calc_psi_zeta(DoubleMatrix zeta) const
 
 // ====================== FRIEND FUNCTIONS ====================== //
 
-void write_ppm(const Simulation& sim,
-               char*         outname,
-               int           iters,
-               int           freq)
-{
-    double    zmax = -1e10, zmin = 1e10;
-    double    pmax = -1e10, pmin = 1e10;
-    double    vmax = -1e10, vmin = 1e10;
-    double    umax = -1e10, umin = 1e10;
-    char      outfile[64];
-    char      outmode  = 0;
-    Simulation::DoubleMatrix psi  = Simulation::DoubleMatrix();
-    Simulation::DoubleMatrix zeta = Simulation::DoubleMatrix();
-
-    sprintf(outfile, "%s/%06d.ppm", outname, (iters/freq));
-
-    __mode_t process_mask = umask(0);
-    mkdir(outname, S_IRWXU | S_IRWXG | S_IRWXO);
-    umask(process_mask);
-    FILE *fout = fopen(outfile, "wb");
-
-    if (!fout) {
-        fprintf (stderr, "Could not open '%s'\n", outfile);
-        return;
-    }
-
-
-
-    sim.calc_psi_zeta(zeta);
-
-    fprintf(fout, "P6 %d %d 255\n", iMAX, jMAX);
-
-
-    for (size_t j = 1; j < jMAX+1 ; j++) {
-        for (size_t i = 1; i < iMAX+1 ; i++) {
-            int r = 0, g = 0, b = 0;
-            if (!(sim.get_flag()(i,j) & C_F)) {
-                r = 0;
-                b = 0;
-                g = 255;
-            } else {
-                if (outmode == 0) {
-                    double z = (i < iMAX && j < jMAX) ? zeta(i,j) : 0.0;
-                    r = g = b = pow(fabs(z/12.6),.4) * 255;
-                } else if (outmode == 1) {
-                    double p = (i < iMAX && j < jMAX) ? psi(i,j) : 0.0;
-                    r = g = b = (p + 3.0) / 7.5 * 255;
-                } else if (outmode == 2) {
-                    r = g = b = (sim.get_p()(i,j)-pmin) / (pmax-pmin) * 255;
-                }
-            }
-            fprintf(fout, "%c%c%c", r, g, b);
-        }
-    }
-
-    fclose(fout);
-}
