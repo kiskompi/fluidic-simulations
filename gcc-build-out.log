@@ -1,0 +1,77 @@
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+0.000333333, 0.000341667, 2, 2, 0.5
+Checksum: 0
+6896180
+p0: 0.000000
+0 time_v:2.13477e-06, step_delta:2.13477e-06, SOR iters:100, res:3.866444e+06, bcells:6896180
+p0: 16.970259
+1 time_v:4.26953e-06, step_delta:2.13477e-06, SOR iters:100, res:1.869740e+05, bcells:6896180
+p0: 28.593705
+2 time_v:6.4043e-06, step_delta:2.13477e-06, SOR iters:100, res:9.888945e+04, bcells:6896180
+p0: 37.549242
+3 time_v:8.53906e-06, step_delta:2.13477e-06, SOR iters:100, res:6.974644e+04, bcells:6896180
+p0: 45.163099
+4 time_v:1.06738e-05, step_delta:2.13477e-06, SOR iters:100, res:5.476460e+04, bcells:6896180
+p0: 51.873942
+5 time_v:1.28086e-05, step_delta:2.13477e-06, SOR iters:100, res:4.553800e+04, bcells:6896180
+p0: 57.928863
+6 time_v:1.49434e-05, step_delta:2.13477e-06, SOR iters:100, res:3.923325e+04, bcells:6896180
+p0: 63.482886
+7 time_v:1.70781e-05, step_delta:2.13477e-06, SOR iters:100, res:3.462519e+04, bcells:6896180
+p0: 68.639955
+8 time_v:1.92129e-05, step_delta:2.13477e-06, SOR iters:100, res:3.109495e+04, bcells:6896180
+p0: 73.473266
+9 time_v:2.13477e-05, step_delta:2.13477e-06, SOR iters:100, res:2.829478e+04, bcells:6896180
+p0: 78.036387
+10 time_v:2.34824e-05, step_delta:2.13477e-06, SOR iters:100, res:2.601347e+04, bcells:6896180
+p0: 82.369784
+11 time_v:2.56172e-05, step_delta:2.13477e-06, SOR iters:100, res:2.411504e+04, bcells:6896180
+p0: 86.504833
+12 time_v:2.7752e-05, step_delta:2.13477e-06, SOR iters:100, res:2.250776e+04, bcells:6896180
+p0: 90.466415
+13 time_v:2.98867e-05, step_delta:2.13477e-06, SOR iters:100, res:2.112740e+04, bcells:6896180
+p0: 94.274633
+14 time_v:3.20215e-05, step_delta:2.13477e-06, SOR iters:100, res:1.992756e+04, bcells:6896180
+p0: 97.945997
+15 time_v:3.41563e-05, step_delta:2.13477e-06, SOR iters:100, res:1.887389e+04, bcells:6896180
+p0: 101.494260
+16 time_v:3.6291e-05, step_delta:2.13477e-06, SOR iters:100, res:1.794032e+04, bcells:6896180
+p0: 104.931019
+17 time_v:3.84258e-05, step_delta:2.13477e-06, SOR iters:100, res:1.710675e+04, bcells:6896180
+p0: 108.266159
+18 time_v:4.05606e-05, step_delta:2.13477e-06, SOR iters:100, res:1.635739e+04, bcells:6896180
+p0: 111.508187
+19 time_v:4.26953e-05, step_delta:2.13477e-06, SOR iters:100, res:1.567964e+04, bcells:6896180
+p0: 114.664488
+20 time_v:4.48301e-05, step_delta:2.13477e-06, SOR iters:100, res:1.506335e+04, bcells:6896180
+p0: 117.741518
+21 time_v:4.69648e-05, step_delta:2.13477e-06, SOR iters:100, res:1.450024e+04, bcells:6896180
+p0: 120.744962
+22 time_v:4.90996e-05, step_delta:2.13477e-06, SOR iters:100, res:1.398345e+04, bcells:6896180
+p0: 123.679857
+23 time_v:5.12344e-05, step_delta:2.13477e-06, SOR iters:100, res:1.350728e+04, bcells:6896180
+p0: 126.550692
+24 time_v:5.33691e-05, step_delta:2.13477e-06, SOR iters:100, res:1.306697e+04, bcells:6896180
+p0: 129.361484
+25 time_v:5.55039e-05, step_delta:2.13477e-06, SOR iters:100, res:1.265845e+04, bcells:6896180
+p0: 132.115849
+26 time_v:5.76387e-05, step_delta:2.13477e-06, SOR iters:100, res:1.227827e+04, bcells:6896180
+p0: 134.817053
+27 time_v:5.97734e-05, step_delta:2.13477e-06, SOR iters:100, res:1.192348e+04, bcells:6896180
+p0: 137.468059
+28 time_v:6.19082e-05, step_delta:2.13477e-06, SOR iters:100, res:1.159151e+04, bcells:6896180
+p0: 140.071566
+29 time_v:6.4043e-05, step_delta:2.13477e-06, SOR iters:100, res:1.128016e+04, bcells:6896180
+p0: 142.630038
+30 time_v:6.61777e-05, step_delta:2.13477e-06, SOR iters:100, res:1.098748e+04, bcells:6896180
+p0: 145.145732
+31 time_v:6.83125e-05, step_delta:2.13477e-06, SOR iters:100, res:1.071178e+04, bcells:6896180
+p0: 147.620726
+32 time_v:7.04473e-05, step_delta:2.13477e-06, SOR iters:100, res:1.045156e+04, bcells:6896180
+p0: 150.056932
+33 time_v:7.2582e-05, step_delta:2.13477e-06, SOR iters:100, res:1.020552e+04, bcells:6896180
+p0: 152.456118
+34 time_v:7.47168e-05, s

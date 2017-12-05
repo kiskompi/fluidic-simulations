@@ -4,7 +4,7 @@ KOKKOS_DEVICES := "OpenMP"
 MAKEFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 SRC_DIR := $(dir $(MAKEFILE_PATH))
 
-SRC = $(wildcard $(SRC_DIR)*.cpp) $(wildcard $(SRC_DIR)Simulation/*.cpp)
+SRC = main.cpp Simulation/simulation.cpp 
 OBJ = $(SRC:$(SRC_DIR)%.cpp=%.o) $(SRC:$(SRC_DIR)Simulation/%.cpp=%.o)
 
 #SRC = $(wildcard *.cpp)

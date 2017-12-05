@@ -64,8 +64,6 @@ int main(int argc, char *argv[])
     	// if (output && (iters % output_frequency == 0)) {
     	//   write_ppm(sim, outname, iters, output_frequency);
     	// }
-        if (iters == 100)
-            break;
     }
     Kokkos::finalize();
     printf("%.2f\n", (double)(time(NULL) - start));

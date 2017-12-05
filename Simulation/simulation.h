@@ -42,7 +42,7 @@ public:
     
     const double        delx       = xlength/iMAX;
     const double        dely       = ylength/jMAX;
-    double              ifluid     = 0.0;
+    int ifluid     = 0;
     
 private:    
     double res        = 0.0;
