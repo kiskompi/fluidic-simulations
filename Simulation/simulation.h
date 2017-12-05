@@ -57,7 +57,7 @@ private:
     DoubleMatrix rhs  = DoubleMatrix  ("rhs",  iMAX+2, jMAX+2); 
     CharMatrix   flag = CharMatrix    ("flag", iMAX+2, jMAX+2);
 
-    bool is_surrounded(const size_t i, const size_t j) const{
+/*    bool is_surrounded(const size_t i, const size_t j) const{
         return (flag(i-1,j-1) & C_F) &&
                (flag(i-1, j ) & C_F) &&
                (flag(i-1,j+1) & C_F) &&
@@ -66,7 +66,7 @@ private:
                (flag(i+1,j-1) & C_F) &&
                (flag(i+1, j ) & C_F) &&
                (flag(i+1,j+1) & C_F);
-    }
+    }*/
 
 public:
     Simulation();

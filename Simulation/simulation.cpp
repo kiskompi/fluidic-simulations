@@ -142,6 +142,7 @@ int Simulation::poisson()
     const double rdy2 = 1.0/(dely*dely);
 
     /* Calculate sum of squares */
+    /*
     Kokkos::parallel_reduce (
         iMAX*jMAX,
 	KOKKOS_LAMBDA(size_t idx, double& inner_p0) {
@@ -153,6 +154,17 @@ int Simulation::poisson()
             }
         }, p0
     );
+    */
+    double_host_view h_p = Kokkos::create_mirror_view (p); 
+    char_host_view   h_f = Kokkos::create_mirror_view (flag); 
+    double_host_view   h_rhs = Kokkos::create_mirror_view (rhs); 
+    for (int i = 1; i <=iMAX; ++i) {
+        for (int j = 1; j <= jMAX; ++j) {
+            if (h_f(i,j) & C_F) {
+                p0 += h_p(i,j)*h_p(i,j);
+            }
+        }
+    }
     p0 = sqrt(p0/ifluid);
     printf("p0: %f\n", p0);
     if (p0 < 0.0001) {
@@ -201,6 +213,7 @@ int Simulation::poisson()
 
         /* Partial computation of residual */
         double resl = 0.0;
+        /*
         Kokkos::parallel_reduce (
             iMAX*jMAX,
             KOKKOS_LAMBDA(size_t idx, double& resl_lmb) {
@@ -208,7 +221,7 @@ int Simulation::poisson()
             const int j = idx%iMAX+1;
 
             if (flag(i,j) & C_F) {
-                /* only fluid cells */
+                // only fluid cells 
                 const  double add = (eps_E*(p(i+1,j)-p(i,j)) -
                               eps_W*(p(i, j )-p(i-1,j))) * rdx2  +
                              (eps_N*(p(i,j+1)-p( i ,j)) -
@@ -216,6 +229,20 @@ int Simulation::poisson()
                 resl_lmb += add*add;
             }
         }, resl);
+        */
+        for (int i = 0; i <= iMAX; ++i) {
+            for (int j = 0; j <= jMAX; ++j) {
+            if (flag(i,j) & C_F) {
+                // only fluid cells 
+                const  double add = (eps_E*(h_p(i+1,j)-h_p(i,j)) -
+                              eps_W*(h_p(i, j )-h_p(i-1,j))) * rdx2  +
+                             (eps_N*(h_p(i,j+1)-h_p( i ,j)) -
+                              eps_S*(h_p(i, j )-h_p(i,j-1))) * rdy2  -  h_rhs(i,j);
+                resl += add*add;
+            }
+ 
+            }
+        }
         resl = sqrt((resl)/ifluid)/p0;
         // printf("%f, %f, %f\n", resl, ifluid, p0);
         res = resl;
@@ -261,7 +288,7 @@ void Simulation::set_timestep_interval()
         double umax = 1.0e-10;
         double vmax = 1.0e-10;
         Kokkos::parallel_reduce (
-            iMAX*jMAX,
+            iMAX,
             KOKKOS_LAMBDA(size_t idx, double& max_ph) {
                 const int i = idx/iMAX+1;
                 const int j = idx%iMAX+1;
@@ -338,14 +365,12 @@ void Simulation::init_flag()
         h_flag(iMAX+1,j) = C_B;
     }
 
-    Kokkos::deep_copy (flag, h_flag); // Copy from host to device.
     /* flags for boundary cells */
     // nem kell kokkosozni
     ibound = 0;
     for (int i = 1; i <= iMAX; ++i) {
         for (int j = 1; j <= jMAX; ++j) {
             if (!(h_flag(i,j) & C_F)) {
-                int a = [=]()->int{return flag(i,j);}();
                 ++ibound;
                 if (h_flag(i-1,j) & C_F) h_flag(i,j) = h_flag(i,j) | B_W;
                 if (h_flag(i+1,j) & C_F) h_flag(i,j) = h_flag(j,j) | B_E;
@@ -355,11 +380,14 @@ void Simulation::init_flag()
         }
     }
     ifluid = (iMAX * jMAX) - ibound;
+    Kokkos::deep_copy (flag, h_flag); // Copy from host to device.
 }
 
 void Simulation::apply_boundary_conditions()
 {
-    for (int j=0; j<=jMAX+1; j++) {
+     Kokkos::parallel_for (
+        jMAX+2,                     
+        KOKKOS_LAMBDA(size_t j) {
         /* Fluid freely flows in from the west */
         u(0,j) = u(1,j);
         v(0,j) = v(1,j);
@@ -367,9 +395,10 @@ void Simulation::apply_boundary_conditions()
         /* Fluid freely flows out to the east */
         u(iMAX,j)   = u(iMAX-1,j);
         v(iMAX+1,j) = v(iMAX,j);
-    }
-
-    for (int i=0; i<=iMAX+1; i++) {
+    });
+    Kokkos::parallel_for (
+        iMAX+2,                     
+        KOKKOS_LAMBDA(size_t i) {
         /* The vertical velocity approaches 0 at the north and south
         * boundaries, but fluid flows freely in the horizontal direction */
         v(i,jMAX)   = 0.0;
@@ -377,7 +406,7 @@ void Simulation::apply_boundary_conditions()
 
         v(i,0) = 0.0;
         u(i,0) = u(i,1);
-    }
+    });
 
     /* Apply no-slip boundary conditions to cells that are adjacent to
     * internal obstacle cells. This forces the u and v velocity to
@@ -388,27 +417,27 @@ void Simulation::apply_boundary_conditions()
         KOKKOS_LAMBDA(size_t idx) {
         const int i = idx/iMAX + 1;
         const int j = idx%iMAX + 1;    
-            if (flag(i,j) & Cell::B_NSEW) {
+            if (flag(i,j) & B_NSEW) {
                 switch (flag(i,j)) {
-                case Cell::B_N:
+                case B_N:
                     u(i,j)   = -u(i,j+1);
                     break;
-                case Cell::B_E:
+                case B_E:
                     u(i,j)   = 0.0;
                     break;
-                case Cell::B_NE:
+                case B_NE:
                     u(i,j)   = 0.0;
                     break;
-                case Cell::B_SE:
+                case B_SE:
                     u(i,j)   = 0.0;
                     break;
-                case Cell::B_NW:
+                case B_NW:
                     u(i,j)   = -u(i,j+1);
                     break;
-                case Cell::B_S:
+                case B_S:
                     u(i,j)   = -u(i,j-1);
                     break;
-                case Cell::B_SW:
+                case B_SW:
                     u(i,j)   = -u(i,j-1);
                     break;
                 }
@@ -419,27 +448,27 @@ void Simulation::apply_boundary_conditions()
         KOKKOS_LAMBDA(size_t idx) {
         const int i = idx/iMAX + 1;
         const int j = idx%iMAX + 1;         
-        if (flag(i+1,j) & Cell::B_NSEW) {
+        if (flag(i+1,j) & B_NSEW) {
             switch (flag(i+1,j)) {
-            case Cell::B_N:
+            case B_N:
                 u(i,j) = -u(i,j+1);
                 break;
-            case Cell::B_W:
+            case B_W:
                 u(i,j) = 0.0;
                 break;
-            case Cell::B_NE:
+            case B_NE:
                 u(i,j) = -u(i,j+1);
                 break;
-            case Cell::B_SW:
+            case B_SW:
                 u(i,j) = 0.0;
                 break;
-            case Cell::B_NW:
+            case B_NW:
                 u(i,j) = 0.0;
                 break;
-            case Cell::B_S:
+            case B_S:
                 u(i,j) = -u(i,j-1);
                 break;
-            case Cell::B_SE:
+            case B_SE:
                 u(i,j) = -u(i,j-1);
                 break;
             }
@@ -452,27 +481,27 @@ void Simulation::apply_boundary_conditions()
         const int i = idx/iMAX + 1;
         const int j = idx%iMAX + 1;         
 
-        if (flag(i,j) & Cell::B_NSEW) {
+        if (flag(i,j) & B_NSEW) {
             switch (flag(i,j)) {
-            case Cell::B_N:
+            case B_N:
                 v(i,j)   = 0.0;
                 break;
-            case Cell::B_E:
+            case B_E:
                 v(i,j)   = -v(i+1,j);
                 break;
-            case Cell::B_NE:
+            case B_NE:
                 v(i,j)   = 0.0;
                 break;
-            case Cell::B_SE:
+            case B_SE:
                 v(i,j)   = -v(i+1,j);
                 break;
-            case Cell::B_NW:
+            case B_NW:
                 v(i,j)   = 0.0;
                 break;
-            case Cell::B_W:
+            case B_W:
                 v(i,j)   = -v(i-1,j);
                 break;
-            case Cell::B_SW:
+            case B_SW:
                 v(i,j)   = -v(i-1,j);
                 break;
             }
@@ -485,27 +514,27 @@ void Simulation::apply_boundary_conditions()
         const int i = idx/iMAX + 1;
         const int j = idx%iMAX + 1;         
 
-        if (flag(i,j+1) & Cell::B_NSEW) {
+        if (flag(i,j+1) & B_NSEW) {
             switch (flag(i,j+1)) {
-            case Cell::B_E:
+            case B_E:
                 v(i,j) = -v(i+1,j);
                 break;
-            case Cell::B_S:
+            case B_S:
                 v(i,j) = 0.0;
                 break;
-            case Cell::B_NE:
+            case B_NE:
                 v(i,j) = -v(i+1,j);
                 break;
-            case Cell::B_SE:
+            case B_SE:
                 v(i,j) = 0.0;
                 break;
-            case Cell::B_SW:
+            case B_SW:
                 v(i,j) = 0.0;
                 break;
-            case Cell::B_W:
+            case B_W:
                 v(i,j) = -v(i-1,j);
                 break;
-            case Cell::B_NW:
+            case B_NW:
                 v(i,j) = -v(i-1,j);
                 break;
             }
@@ -533,7 +562,14 @@ void  Simulation::calc_psi_zeta(DoubleMatrix zeta) const
         KOKKOS_LAMBDA(size_t idx) {
         const int i = idx/iMAX + 1;
         const int j = idx%iMAX + 1;         
-        if (is_surrounded(i, j)) {
+        if ((flag(i-1,j-1) & C_F) &&
+               (flag(i-1, j ) & C_F) &&
+               (flag(i-1,j+1) & C_F) &&
+               (flag( i ,j-1) & C_F) &&
+               (flag( i ,j+1) & C_F) &&
+               (flag(i+1,j-1) & C_F) &&
+               (flag(i+1, j ) & C_F) &&
+               (flag(i+1,j+1) & C_F)) {
             zeta(i,j) = (u(i,j+1)-u(i,j))/dely-
                          (v(i+1,j)-v(i,j))/delx;
         } else {

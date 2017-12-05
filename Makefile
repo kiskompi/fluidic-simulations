@@ -1,5 +1,5 @@
 KOKKOS_PATH :=/home/akomporday/git-project/include
-KOKKOS_DEVICES := "OpenMP"
+KOKKOS_DEVICES := "OpenMP, Cuda"
 
 MAKEFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 SRC_DIR := $(dir $(MAKEFILE_PATH))
