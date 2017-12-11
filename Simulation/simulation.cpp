@@ -62,8 +62,8 @@ void Simulation::compute_tentative_velocity()
     Kokkos::parallel_for (
         iMAX*jMAX,
 	KOKKOS_LAMBDA(size_t idx) {
-                const int i = idx/iMAX + 1;
-                const int j = idx%iMAX + 1;
+                const int i = idx%iMAX + 1;
+                const int j = idx/iMAX + 1;
                 /* only if both adjacent cells are fluid cells */
                 if ((flag_t(i,j) & C_F) && (flag_t(i+1,j) & C_F)) {
                     const double du2dx = 
@@ -93,10 +93,10 @@ void Simulation::compute_tentative_velocity()
     Kokkos::parallel_for (
         iMAX*jMAX,
 	KOKKOS_LAMBDA(size_t idx) {
-            //  const int i = idx/iMAX+1;
-            //  const int j = idx%iMAX+1;
+            const int i = idx%iMAX+1;
+            const int j = idx/iMAX+1;
             /* only if both adjacent cells are fluid cells */
-            /*
+            
             if ((flag_t(i,j) & C_F) && (flag_t(i,j+1) & C_F)) {
                 const double duvdx = 
                         ((u_t(i,j)+u_t(i,j+1))     * (v_t(i,j)+v_t(i+1,j))+
@@ -114,24 +114,24 @@ void Simulation::compute_tentative_velocity()
                 const double laplv = (v_t(i+1,j)-2.0*v_t(i,j)+v_t(i-1,j))/delx_t/delx_t+
                         (v_t(i,j+1)-2.0*v_t(i,j)+v_t(i,j-1))/dely_t/dely_t;
 
-                g_t(i,j) = v_t(i,j)+step_delta_t*(laplv/reynolds_t-duvdx-dv2dy);
+               g_t(i,j) = v_t(i,j)+step_delta_t*(laplv/reynolds_t-duvdx-dv2dy);
             } else {
-                g_t(i,j) = v_t(i,j);
-            }*/
+               g_t(i,j) = v_t(i,j);
+            }
     });
 
     /* f & g at external boundaries */
     Kokkos::parallel_for (
         jMAX,
 	KOKKOS_LAMBDA(size_t j) {
-        f_t(0,j)    = u_t(0,j);
-        f_t(iMAX,j) = u_t(iMAX,j);
+        f_t(0,j+1)    = u_t(0,j+1);
+        f_t(iMAX,j+1) = u_t(iMAX,j+1);
     });
     Kokkos::parallel_for (
         iMAX,
 	KOKKOS_LAMBDA(size_t i) {
-        g_t(i,0)    = v_t(i,0);
-        g_t(i,jMAX) = v_t(i,jMAX);
+        g_t(i+1,0)    = v_t(i+1,0);
+        g_t(i+1,jMAX) = v_t(i+1,jMAX);
     });
 }
 
@@ -148,8 +148,8 @@ void Simulation::compute_rhs()
     Kokkos::parallel_for (
         iMAX*jMAX,
         KOKKOS_LAMBDA(size_t idx) {
-        const int i = idx/iMAX+1;
-        const int j = idx%iMAX+1;
+        const int i = idx%iMAX+1;
+        const int j = idx/iMAX+1;
         if (flag_t(i,j) & C_F) {
             /* only for fluid and non-surface cells */
             rhs_t(i,j) = ((f_t(i,j)-f_t(i-1,j))/delx_t +
@@ -184,7 +184,6 @@ int Simulation::poisson()
     */
     double_host_view h_p = Kokkos::create_mirror_view (p); 
     char_host_view   h_f = Kokkos::create_mirror_view (flag); 
-    double_host_view   h_rhs_t = Kokkos::create_mirror_view (rhs); 
     for (int i = 1; i <=iMAX; ++i) {
         for (int j = 1; j <= jMAX; ++j) {
             if (h_f(i,j) & C_F) {
@@ -192,6 +191,8 @@ int Simulation::poisson()
             }
         }
     }
+    Kokkos::deep_copy(flag, h_f);
+    Kokkos::deep_copy(p, h_p);
     p0 = sqrt(p0/ifluid);
     printf("p0: %f\n", p0);
     if (p0 < 0.0001) {
@@ -200,39 +201,40 @@ int Simulation::poisson()
 
     auto rhs_t = rhs;
     auto flag_t= flag;
+    auto p_t= p;
     /* Red/Black SOR-iteration */
     for (iter = 0; iter < itermax; ++iter) {
         for (int rb = 0; rb <= 1; ++rb) {
         Kokkos::parallel_for (
             iMAX*jMAX,
             KOKKOS_LAMBDA(size_t idx) {
-            const int i = idx/iMAX + 1;
-            const int j = idx%jMAX + 1;
+            const int i = idx%(iMAX + 2)+1;
+            const int j = idx/(iMAX + 2)+1;
             /* This is tricky, try and think about what happens here */
             if ((i+j) % 2 != rb) {
                 return;
             }
-            if (flag(i,j) == (C_F | B_NSEW)) {
+            if (flag_t(i,j) == (C_F | B_NSEW)) {
                 /* five point star for interior fluid cells */
                 const double beta_2 = -omega/(2.0*(rdx2+rdy2));
                 double pijprev = p(i,j);
                 p(i,j) = (1.0-omega)*p(i,j) -
                           beta_2*(
-                                (p(i+1,j)+p(i-1,j))*rdx2
-                              + (p(i,j+1)+p(i,j-1))*rdy2
+                                (p_t(i+1,j)+p_t(i-1,j))*rdx2
+                              + (p_t(i,j+1)+p_t(i,j-1))*rdy2
                               -  rhs_t(i,j));
-                double pij = p(i,j);
+                double pij = p_t(i,j);
                 double rhs_tij = rhs_t(i,j);
             } else if (flag_t(i,j) & C_F) {
                 /* modified star near boundary */
-                double pijprev = p(i,j);
+                double pijprev = p_t(i,j);
                 const double beta_mod = -omega/((eps_E+eps_W)*rdx2+(eps_N+eps_S)*rdy2);
                 p(i,j) = (1.-omega)*p(i,j) -
                           beta_mod*(
-                                (eps_E*p(i+1,j)+eps_W*p(i-1,j))*rdx2
-                              + (eps_N*p(i,j+1)+eps_S*p(i,j-1))*rdy2
+                                (eps_E*p_t(i+1,j)+eps_W*p(i-1,j))*rdx2
+                              + (eps_N*p_t(i,j+1)+eps_S*p(i,j-1))*rdy2
                               - rhs_t(i,j));
-                double pij = p(i,j);
+                double pij = p_t(i,j);
                 double rhs_tij = rhs_t(i,j);
 
             }
@@ -241,23 +243,23 @@ int Simulation::poisson()
 
         /* Partial computation of residual */
         double resl = 0.0;
-        /*
+        
         Kokkos::parallel_reduce (
             iMAX*jMAX,
             KOKKOS_LAMBDA(size_t idx, double& resl_lmb) {
-            const int i = idx/iMAX+1;
-            const int j = idx%iMAX+1;
+            const int i = idx%iMAX+1;
+            const int j = idx/iMAX+1;
 
             if (flag_t(i,j) & C_F) {
                 // only fluid cells 
-                const  double add = (eps_E*(p(i+1,j)-p(i,j)) -
-                              eps_W*(p(i, j )-p(i-1,j))) * rdx2  +
-                             (eps_N*(p(i,j+1)-p( i ,j)) -
-                              eps_S*(p(i, j )-p(i,j-1))) * rdy2  -  rhs_t(i,j);
+                const  double add = (eps_E*(p_t(i+1,j)-p_t(i,j)) -
+                              eps_W*(p(i, j )-p_t(i-1,j))) * rdx2  +
+                             (eps_N*(p(i,j+1)-p_t( i ,j)) -
+                              eps_S*(p(i, j )-p_t(i,j-1))) * rdy2  -  rhs_t(i,j);
                 resl_lmb += add*add;
             }
         }, resl);
-        */
+       /* 
         for (int i = 0; i <= iMAX; ++i) {
             for (int j = 0; j <= jMAX; ++j) {
             if (flag(i,j) & C_F) {
@@ -270,7 +272,7 @@ int Simulation::poisson()
             }
  
             }
-        }
+        }*/
         resl = sqrt((resl)/ifluid)/p0;
         // printf("%f, %f, %f\n", resl, ifluid, p0);
         res = resl;
@@ -299,8 +301,8 @@ void Simulation::update_velocity()
     Kokkos::parallel_for (
             iMAX*jMAX,
             KOKKOS_LAMBDA(size_t idx) {
-            const int i = idx/iMAX+1;
-            const int j = idx%jMAX+1;
+            const int i = idx%iMAX+1;
+            const int j = idx/iMAX+1;
             u_t(i,j) = f_t(i,j)-(p_t(i+1,j)-p_t(i,j))*step_delta_t/delx_t;
             v_t(i,j) = g_t(i,j)-(p_t(i,j+1)-p_t(i,j))*step_delta_t/dely_t;
     });
@@ -323,8 +325,8 @@ void Simulation::set_timestep_interval()
         Kokkos::parallel_reduce (
             iMAX,
             KOKKOS_LAMBDA(size_t idx, double& max_ph) {
-                const int i = idx/iMAX+1;
-                const int j = idx%iMAX+1;
+                const int i = idx%iMAX+1;
+                const int j = idx/iMAX+1;
                 /* only if both adjacent cells are fluid cells */
                 max_ph = max(fabs(u_t(i,j)), max_ph);
         }, umax);
@@ -332,8 +334,8 @@ void Simulation::set_timestep_interval()
         Kokkos::parallel_reduce (
             iMAX*jMAX,
             KOKKOS_LAMBDA(size_t idx, double& max_ph) {
-                const int i = idx/iMAX+1;
-                const int j = idx%iMAX+1;
+                const int i = idx%iMAX+1;
+                const int j = idx/iMAX+1;
                 /* only if both adjacent cells are fluid cells */
                 max_ph = max(fabs(v_t(i,j)), max_ph);
         }, vmax);
@@ -448,11 +450,12 @@ void Simulation::apply_boundary_conditions()
     * tend towards zero in these cells.
     */
     auto flag_t = flag;
+    printf("flag_t address: %p\n", flag_t.data ());
     Kokkos::parallel_for (
         iMAX*jMAX,                     
         KOKKOS_LAMBDA(size_t idx) {
-        const int i = idx/iMAX + 1;
-        const int j = idx%iMAX + 1;    
+        const int i = idx%iMAX + 1;
+        const int j = idx/iMAX + 1;    
             if (flag_t(i,j) & B_NSEW) {
                 switch (flag_t(i,j)) {
                 case B_N:
@@ -482,8 +485,8 @@ void Simulation::apply_boundary_conditions()
     Kokkos::parallel_for (
         iMAX*jMAX,                     
         KOKKOS_LAMBDA(size_t idx) {
-        const int i = idx/iMAX + 1;
-        const int j = idx%iMAX + 1;         
+        const int i = idx%iMAX + 1;
+        const int j = idx/iMAX + 1;         
         if (flag_t(i+1,j) & B_NSEW) {
             switch (flag_t(i+1,j)) {
             case B_N:
@@ -514,8 +517,8 @@ void Simulation::apply_boundary_conditions()
     Kokkos::parallel_for (
         iMAX*jMAX,                     
         KOKKOS_LAMBDA(size_t idx) {
-        const int i = idx/iMAX + 1;
-        const int j = idx%iMAX + 1;         
+        const int i = idx%iMAX + 1;
+        const int j = idx/iMAX + 1;         
 
         if (flag_t(i,j) & B_NSEW) {
             switch (flag_t(i,j)) {
@@ -547,8 +550,8 @@ void Simulation::apply_boundary_conditions()
      Kokkos::parallel_for (
         iMAX*jMAX,                     
         KOKKOS_LAMBDA(size_t idx) {
-        const int i = idx/iMAX + 1;
-        const int j = idx%iMAX + 1;         
+        const int i = idx%iMAX + 1;
+        const int j = idx/iMAX + 1;         
 
         if (flag_t(i,j+1) & B_NSEW) {
             switch (flag_t(i,j+1)) {
@@ -606,8 +609,8 @@ void  Simulation::calc_psi_zeta(DoubleMatrix zeta) const
      Kokkos::parallel_for (
         iMAX*jMAX,                     
         KOKKOS_LAMBDA(size_t idx) {
-        const int i = idx/iMAX + 1;
-        const int j = idx%iMAX + 1;         
+        const int i = idx%iMAX + 1;
+        const int j = idx/iMAX + 1;         
         if ((flag_t(i-1,j-1) & C_F) &&
                (flag_t(i-1, j ) & C_F) &&
                (flag_t(i-1,j+1) & C_F) &&

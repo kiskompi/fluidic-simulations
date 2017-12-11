@@ -12,8 +12,8 @@
 #include <Kokkos_Core.hpp>
 #include "datadef.h"
 
-#define iMAX 660
-#define jMAX 120
+#define iMAX 6600
+#define jMAX 1200
 
 class Simulation {
 public:

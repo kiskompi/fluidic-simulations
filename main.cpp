@@ -2,7 +2,7 @@
 #include "output.c"
 #include <iostream>
 #include "Simulation/simulation.h"
-#include <chrono>
+#include <time.h>
 
 /* Modified slightly by D. Orchard (2010) from the classic code from: 
 
@@ -17,8 +17,10 @@
 
 int main(int argc, char *argv[])
 {
-    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();   
-    time_t start = time(NULL);
+    clock_t start, end;
+    double cpu_time_used;
+     
+    start = clock();
     Kokkos::initialize();
 
     Simulation sim = Simulation();
@@ -48,16 +50,16 @@ int main(int argc, char *argv[])
 	
         sim.update_velocity();
         sim.apply_boundary_conditions();
-
+        if (iters == 100) break;
     	// if (output && (iters % output_frequency == 0)) {
     	//   write_ppm(sim, outname, iters, output_frequency);
     	// }
     }
     Kokkos::finalize();
     printf("%.2f\n", (double)(time(NULL) - start));
-    std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-    std::cout<<"\nChrono Runtime"<<duration<<"\n";
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    std::cout<<"\nChrono Runtime"<<cpu_time_used<<"\n";
     return 0;
 }
 

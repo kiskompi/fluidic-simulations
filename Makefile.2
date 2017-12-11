@@ -7,16 +7,16 @@ default: build
 
 ifneq (,$(findstring Cuda,$(KOKKOS_DEVICES)))
 CXX = ${KOKKOS_PATH}/bin/nvcc_wrapper
-CXXFLAGS = -O0 -g
 LINK = ${CXX}
 LINKFLAGS = 
 EXE = navier.cuda
 KOKKOS_DEVICES = "Cuda,OpenMP"
+CXXFLAGS = -O3  
 KOKKOS_ARCH = "SNB,Kepler35"
 KOKKOS_CUDA_OPTIONS += "enable_lambda"
 else
 CXX = g++
-CXXFLAGS = -O0 -g
+CXXFLAGS = -O3 
 LINK = ${CXX}
 LINKFLAGS =  
 EXE = navier.host
