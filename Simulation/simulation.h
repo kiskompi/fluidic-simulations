@@ -44,7 +44,6 @@ public:
     const double        dely       = ylength/jMAX;
     int ifluid     = 0;
     
-private:    
     double res        = 0.0;
     int    ibound     = 0;
     double step_delta = 0.003;   /* Duration of each timestep */

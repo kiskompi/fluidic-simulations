@@ -20,21 +20,9 @@ int main(int argc, char *argv[])
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();   
     time_t start = time(NULL);
     Kokkos::initialize();
-    int    output           = 0;
-    int    output_frequency = 0;
-    char*  outname          = nullptr;
 
     Simulation sim = Simulation();
     sim.init_flag();
-    if (argc > 1) {
-      output = 1;
-      outname = argv[1];
-      output_frequency = 1;
-    }
-
-    if (argc > 2) {
-      output_frequency = atoi(argv[2]);
-    }
 
     sim.apply_boundary_conditions();
     
