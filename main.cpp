@@ -33,10 +33,11 @@ int main(int argc, char *argv[])
     int    itersor= 0;
     
     for (double time_v = 0.0; time_v < sim.time_end; time_v += sim.get_step_delta(), ++iters) {
+        sim.ifluid = (iMAX*jMAX)-sim.ibound; 
         sim.set_timestep_interval();
         sim.compute_tentative_velocity();
         sim.compute_rhs();
-
+        printf("%d\n", sim.ifluid);
         itersor = (sim.ifluid > 0) ? sim.poisson() : 0;
 
         printf("%d time_v:%g, step_delta:%g, SOR iters:%3d, res:%e, bcells:%d\n",
@@ -50,6 +51,14 @@ int main(int argc, char *argv[])
 	
         sim.update_velocity();
         sim.apply_boundary_conditions();
+        double checksum = 0;
+        Simulation::char_host_view h_f = Kokkos::create_mirror_view (sim.get_flag());
+        for (int i = 0; i <= iMAX; ++i) {
+            for (int j = 1; j <= jMAX; ++j){
+                checksum += h_f(i,j);
+            }
+        }
+        printf("%f\n",checksum);
         if (iters == 100) break;
     	// if (output && (iters % output_frequency == 0)) {
     	//   write_ppm(sim, outname, iters, output_frequency);

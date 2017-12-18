@@ -12,8 +12,8 @@
 #include <Kokkos_Core.hpp>
 #include "datadef.h"
 
-#define iMAX 6600
-#define jMAX 1200
+#define iMAX 660
+#define jMAX 120
 
 class Simulation {
 public:
@@ -78,8 +78,8 @@ public:
     void calc_psi_zeta(DoubleMatrix zeta) const;
     void init_flag();       // Initialize the flag array
 
-    inline const CharMatrix get_flag() const {
-        return flag;
+    CharMatrix get_flag() {
+       return flag;
     }
     
     inline const DoubleMatrix get_p() const {
@@ -104,7 +104,7 @@ public:
         int           iters, 
         int           freq);
     friend unsigned int simplest_checksum_char(Simulation::CharMatrix in);
-    friend double simplest_checksum(Simulation::DoubleMatrix in);
+    friend double       simplest_checksum(Simulation::DoubleMatrix in);
 };
 
 

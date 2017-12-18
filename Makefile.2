@@ -11,12 +11,12 @@ LINK = ${CXX}
 LINKFLAGS = 
 EXE = navier.cuda
 KOKKOS_DEVICES = "Cuda,OpenMP"
-CXXFLAGS = -O3  
+CXXFLAGS = -O0 -g3 -G  
 KOKKOS_ARCH = "SNB,Kepler35"
 KOKKOS_CUDA_OPTIONS += "enable_lambda"
 else
 CXX = g++
-CXXFLAGS = -O3 
+CXXFLAGS = -O0 
 LINK = ${CXX}
 LINKFLAGS =  
 EXE = navier.host
